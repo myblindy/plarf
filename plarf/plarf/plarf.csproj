@@ -81,7 +81,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ClassLibrary1\Plarf.Engine.csproj">
+    <ProjectReference Include="..\plarf.engine\Plarf.Engine.csproj">
       <Project>{ab2361c2-4edf-4b02-b09b-c772029ff1bb}</Project>
       <Name>Plarf.Engine</Name>
     </ProjectReference>
