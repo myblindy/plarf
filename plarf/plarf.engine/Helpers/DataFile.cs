@@ -10,7 +10,7 @@ namespace Plarf.Engine.Helpers
 {
     class DataFile : DynamicObject
     {
-        Dictionary<string, object> __DynamicPropertiesHolder = new Dictionary<string, object>();
+        Dictionary<string, string> __DynamicPropertiesHolder = new Dictionary<string, string>();
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
@@ -28,8 +28,30 @@ namespace Plarf.Engine.Helpers
 
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
-            __DynamicPropertiesHolder[binder.Name] = value;
+            __DynamicPropertiesHolder[binder.Name] = value as string;
             return true;
+        }
+
+        public static int ToInt32(dynamic property, int def = 0)
+        {
+            return property == null ? def : Convert.ToInt32(property);
+        }
+
+        public static ValueRange<int> ToIntValueRange(dynamic property)
+        {
+            int dashidx = property.IndexOf('-');
+
+            return new ValueRange<int>(
+                Convert.ToInt32(property.Substring(0, dashidx)),
+                Convert.ToInt32(property.Substring(dashidx + 1)));
+        }
+
+        public static Tuple<ValueRange<int>, string> ToNamedIntValueRange(dynamic property)
+        {
+            var p = (string)property;
+
+            var range = new string(p.TakeWhile(c => char.IsWhiteSpace(c) || c == '-' || char.IsDigit(c)).ToArray());
+            return Tuple.Create(ToIntValueRange(range), p.Substring(range.Length));
         }
 
         public DataFile(Stream inputstream)

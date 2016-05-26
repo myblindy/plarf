@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Plarf.Engine.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,13 +9,17 @@ namespace Plarf.Engine.GameObjects
 {
     public class Resource
     {
-        public string Name { get; set; }
-        public int StackableTo { get; set; }
+        public string Name { get; private set; }
+        public ResourceClass ResourceClass { get; private set; }
+        public ValueRange<int> ValueRange { get; private set; }
 
         public Resource(dynamic datafile)
         {
             Name = datafile.Name;
-            StackableTo = datafile.StackableTo == null ? 1 : Convert.ToInt32(datafile.StackableTo);
+
+            Tuple<ValueRange<int>, string> classvalues = DataFile.ToNamedIntValueRange(datafile.Holds);
+            ResourceClass = Game.Instance.ResourceClasses.Single(r => r.Name.Equals(classvalues.Item2, StringComparison.CurrentCultureIgnoreCase));
+            ValueRange = classvalues.Item1;
         }
     }
 }

@@ -23,7 +23,9 @@ namespace Plarf.Engine.LuaInterface
         /// <summary>
         /// The resource classes loaded at runtime
         /// </summary>
-        public IEnumerable<string> ResourceClasses { get { return Game.ResourceClasses.Select(r => r.Name); } }
+        public IEnumerable<GameObjects.ResourceClass> ResourceClasses => Game.ResourceClasses;
+
+        public IEnumerable<GameObjects.Resource> ResourceTemplates => Game.ResourceTemplates;
 
         public LIGame(Game game)
         {

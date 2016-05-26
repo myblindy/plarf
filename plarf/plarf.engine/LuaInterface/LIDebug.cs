@@ -11,7 +11,6 @@ namespace Plarf.Engine.LuaInterface
     /// <summary>
     /// Lua Interface class for debugging purposes
     /// </summary>
-    [MoonSharpUserData]
     class LIDebug
     {
         /// <summary>

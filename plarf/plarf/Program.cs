@@ -14,7 +14,7 @@ namespace Plarf
         [STAThread]
         static void Main()
         {
-            var game = new Engine.Game();
+            Engine.Game.Instance.Initialize();
             return;
 
             Application.EnableVisualStyles();
