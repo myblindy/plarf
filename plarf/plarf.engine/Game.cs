@@ -24,22 +24,25 @@ namespace Plarf.Engine
         /// </summary>
         public List<ResourceClass> ResourceClasses { get; } = new List<ResourceClass>();
 
+        /// <summary>
+        /// The array of resource templates to be stamped in the world
+        /// </summary>
         public List<Resource> ResourceTemplates { get; } = new List<Resource>();
 
-        public void Initialize()
+        public World World { get; } = new World();
+
+        private Random Random;
+        public int GetNextRandomInteger() => Random.Next();
+        public int GetNextRandomInteger(int from, int to) => Random.Next(from, to);
+        public int GetNextRandomInteger(ValueRange<int> range) => Random.Next(range.From, range.To);
+        public double GetNextRandomDouble() => Random.NextDouble();
+
+        public void Initialize(int randseed = 0)
         {
+            Random = randseed == 0 ? new Random() : new Random(randseed);
+
             BindLuaObjects();
             LoadGameData();
-
-            LuaScript.DoString(@"
-                for i, r in ipairs(game.resourceClasses) do
-                    game.debug.writeLine(r.name .. ' stackable to ' .. r.stackableTo)
-                end");
-
-            LuaScript.DoString(@"
-                for i, r in ipairs(game.resourceTemplates) do
-                    game.debug.writeLine(r.name .. ' contains ' .. r.valueRange.from .. '-' .. r.valueRange.to .. ' ' .. r.resourceClass.name)
-                end");
         }
 
         private void LoadGameData()
@@ -53,6 +56,7 @@ namespace Plarf.Engine
                     ResourceTemplates.Add(new Resource(new DataFile(resfilestream)));
         }
 
+        #region Lua Bindings
         private void BindLuaObjects()
         {
             // the types
@@ -61,9 +65,13 @@ namespace Plarf.Engine
             UserData.RegisterType<ResourceClass>();
             UserData.RegisterType<Resource>();
             UserData.RegisterType<ValueRange<int>>();
+            UserData.RegisterType<World>();
+            UserData.RegisterType<Location>();
+            UserData.RegisterType<Size>();
 
             // and the global objects
             LuaScript.Globals.Set("game", UserData.Create(new LuaInterface.LIGame(this)));
         }
+        #endregion
     }
 }

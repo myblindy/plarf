@@ -7,19 +7,32 @@ using System.Threading.Tasks;
 
 namespace Plarf.Engine.GameObjects
 {
-    public class Resource
+    public class Resource : Placeable
     {
         public string Name { get; private set; }
         public ResourceClass ResourceClass { get; private set; }
         public ValueRange<int> ValueRange { get; private set; }
+        public int Value { get; set; }
 
         public Resource(dynamic datafile)
         {
             Name = datafile.Name;
+            Size = new Size(DataFile.ToInt32(datafile.Width, 1), DataFile.ToInt32(datafile.Height, 1));
 
             Tuple<ValueRange<int>, string> classvalues = DataFile.ToNamedIntValueRange(datafile.Holds);
             ResourceClass = Game.Instance.ResourceClasses.Single(r => r.Name.Equals(classvalues.Item2, StringComparison.CurrentCultureIgnoreCase));
             ValueRange = classvalues.Item1;
         }
+
+        public Resource() { }
+
+        public Resource CreatePlaceableInstance(Location location) => new Resource
+        {
+            Name = Name,
+            ResourceClass = ResourceClass,
+            Value = Game.Instance.GetNextRandomInteger(ValueRange),
+            Location = location,
+            Size = Size
+        };
     }
 }

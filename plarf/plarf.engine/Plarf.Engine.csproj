@@ -45,9 +45,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Game.cs" />
+    <Compile Include="GameObjects\IPlaceable.cs" />
     <Compile Include="GameObjects\Resource.cs" />
     <Compile Include="GameObjects\ResourceClass.cs" />
+    <Compile Include="GameObjects\World.cs" />
     <Compile Include="Helpers\DataFile.cs" />
+    <Compile Include="Helpers\Location.cs" />
+    <Compile Include="Helpers\Size.cs" />
     <Compile Include="Helpers\ValueRange.cs" />
     <Compile Include="Helpers\VFS.cs" />
     <Compile Include="LuaInterface\LIDebug.cs" />
