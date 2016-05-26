@@ -53,8 +53,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Resources\food.dat" />
-    <None Include="Data\Resources\wood.dat" />
+    <None Include="Data\ResourceClasses\food.dat" />
+    <None Include="Data\ResourceClasses\wood.dat" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

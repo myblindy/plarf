@@ -34,7 +34,7 @@ namespace Plarf.Engine
 
         private void LoadGameData()
         {
-            foreach (var resfile in VFS.GetFiles(@"Resources", "*.dat"))
+            foreach (var resfile in VFS.GetFiles(@"ResourceClasses", "*.dat"))
                 using (var resfilestream = VFS.OpenStream(resfile))
                     ResourceClasses.Add(new Resource(new DataFile(resfilestream)));
         }
