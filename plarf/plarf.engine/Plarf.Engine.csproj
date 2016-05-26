@@ -45,14 +45,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Game.cs" />
+    <Compile Include="GameObjects\Resource.cs" />
+    <Compile Include="Helpers\DataFile.cs" />
+    <Compile Include="Helpers\VFS.cs" />
     <Compile Include="LuaInterface\LIDebug.cs" />
     <Compile Include="LuaInterface\LIGame.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\Resources\food.dat" />
+    <None Include="Data\Resources\wood.dat" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>echo Copying data folders...
+xcopy $(ProjectDir)Data $(SolutionDir)plarf\$(OutDir)Data /q /i /s /e /y</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

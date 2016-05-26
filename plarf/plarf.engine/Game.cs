@@ -1,4 +1,6 @@
 ﻿using MoonSharp.Interpreter;
+using Plarf.Engine.GameObjects;
+using Plarf.Engine.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +16,27 @@ namespace Plarf.Engine
         /// </summary>
         public Script LuaScript { get; } = new Script();
 
+        /// <summary>
+        /// The array of resource classes loaded at runtime
+        /// </summary>
+        public List<Resource> ResourceClasses { get; } = new List<Resource>();
+
         public Game()
         {
             BindLuaObjects();
+            LoadGameData();
 
-            LuaScript.DoString("game.debug.writeLine('arf')");
+            LuaScript.DoString(@"
+                for name in game.resourceClasses do
+                    game.debug.writeLine(name)
+                end");
+        }
+
+        private void LoadGameData()
+        {
+            foreach (var resfile in VFS.GetFiles(@"Resources", "*.dat"))
+                using (var resfilestream = VFS.OpenStream(resfile))
+                    ResourceClasses.Add(new Resource(new DataFile(resfilestream)));
         }
 
         private void BindLuaObjects()
