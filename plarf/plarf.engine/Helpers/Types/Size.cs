@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Plarf.Engine.Helpers
+namespace Plarf.Engine.Helpers.Types
 {
     public struct Size
     {

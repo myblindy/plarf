@@ -14,9 +14,6 @@ namespace Plarf
         [STAThread]
         static void Main()
         {
-            Engine.Game.Instance.Initialize();
-            return;
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());

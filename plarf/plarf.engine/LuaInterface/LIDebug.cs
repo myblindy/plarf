@@ -1,4 +1,5 @@
-﻿using MoonSharp.Interpreter;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MoonSharp.Interpreter;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,5 +18,7 @@ namespace Plarf.Engine.LuaInterface
         /// Writes a message to the debug console
         /// </summary>
         public void WriteLine(object msg) { Debug.WriteLine(msg); }
+
+        public void TestAssertIsTrue(bool b) { Assert.IsTrue(b); }
     }
 }

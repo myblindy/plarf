@@ -1,4 +1,5 @@
 ﻿using Plarf.Engine.Helpers;
+using Plarf.Engine.Helpers.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace Plarf.Engine.GameObjects
 
         public bool ContainsPoint(int x, int y)
         {
-            return Location.X >= x && Location.X + Size.Width - 1 <= x && Location.Y >= y && Location.Y + Size.Height - 1 <= y;
+            return x >= Location.X && x <= Location.X + Size.Width - 1 && y >= Location.Y && y <= Location.Y + Size.Height - 1;
         }
     }
 }

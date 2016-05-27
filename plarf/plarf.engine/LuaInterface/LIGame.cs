@@ -1,4 +1,6 @@
 ﻿using MoonSharp.Interpreter;
+using Plarf.Engine.GameObjects;
+using Plarf.Engine.Helpers.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +27,9 @@ namespace Plarf.Engine.LuaInterface
         /// </summary>
         public IEnumerable<GameObjects.ResourceClass> ResourceClasses => Game.ResourceClasses;
 
-        public IEnumerable<GameObjects.Resource> ResourceTemplates => Game.ResourceTemplates;
+        public IDictionary<string, GameObjects.Resource> ResourceTemplates => Game.ResourceTemplates;
+
+        public World World => Game.World;
 
         public LIGame(Game game)
         {

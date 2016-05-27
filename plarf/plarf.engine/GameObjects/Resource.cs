@@ -1,4 +1,6 @@
 ﻿using Plarf.Engine.Helpers;
+using Plarf.Engine.Helpers.FileSystem;
+using Plarf.Engine.Helpers.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Plarf.Engine.GameObjects
 {
-    public class Resource : Placeable
+    public class Resource : Placeable, IPlaceableTemplate
     {
         public string Name { get; private set; }
         public ResourceClass ResourceClass { get; private set; }
@@ -26,7 +28,7 @@ namespace Plarf.Engine.GameObjects
 
         public Resource() { }
 
-        public Resource CreatePlaceableInstance(Location location) => new Resource
+        public Placeable CreatePlaceableInstance(Location location) => new Resource
         {
             Name = Name,
             ResourceClass = ResourceClass,

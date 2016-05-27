@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Plarf.Engine.Helpers
+namespace Plarf.Engine.Helpers.FileSystem
 {
     class VFS
     {

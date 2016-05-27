@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plarf", "plarf\Plarf.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plarf.Engine", "plarf.engine\Plarf.Engine.csproj", "{AB2361C2-4EDF-4B02-B09B-C772029FF1BB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plarf.Tests", "Plarf.Tests\Plarf.Tests.csproj", "{89E62CC4-227F-452F-B691-629A086FB80E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{AB2361C2-4EDF-4B02-B09B-C772029FF1BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB2361C2-4EDF-4B02-B09B-C772029FF1BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB2361C2-4EDF-4B02-B09B-C772029FF1BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89E62CC4-227F-452F-B691-629A086FB80E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89E62CC4-227F-452F-B691-629A086FB80E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89E62CC4-227F-452F-B691-629A086FB80E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89E62CC4-227F-452F-B691-629A086FB80E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

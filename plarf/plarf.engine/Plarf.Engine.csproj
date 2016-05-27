@@ -30,6 +30,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="MoonSharp.Interpreter, Version=1.6.0.0, Culture=neutral, PublicKeyToken=921e73ce94aa17f8, processorArchitecture=MSIL">
       <HintPath>..\packages\MoonSharp.1.6.0.0\lib\net40-client\MoonSharp.Interpreter.dll</HintPath>
       <Private>True</Private>
@@ -45,15 +46,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Game.cs" />
-    <Compile Include="GameObjects\IPlaceable.cs" />
+    <Compile Include="GameObjects\IPlaceableTemplate.cs" />
+    <Compile Include="GameObjects\Placeable.cs" />
     <Compile Include="GameObjects\Resource.cs" />
     <Compile Include="GameObjects\ResourceClass.cs" />
     <Compile Include="GameObjects\World.cs" />
-    <Compile Include="Helpers\DataFile.cs" />
-    <Compile Include="Helpers\Location.cs" />
-    <Compile Include="Helpers\Size.cs" />
-    <Compile Include="Helpers\ValueRange.cs" />
-    <Compile Include="Helpers\VFS.cs" />
+    <Compile Include="Helpers\FileSystem\DataFile.cs" />
+    <Compile Include="Helpers\Exceptions\LocationAlreadyInUse.cs" />
+    <Compile Include="Helpers\Types\Location.cs" />
+    <Compile Include="Helpers\Types\Size.cs" />
+    <Compile Include="Helpers\Types\ValueRange.cs" />
+    <Compile Include="Helpers\FileSystem\VFS.cs" />
     <Compile Include="LuaInterface\LIDebug.cs" />
     <Compile Include="LuaInterface\LIGame.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -61,6 +64,7 @@
   <ItemGroup>
     <None Include="Data\ResourceClasses\food.dat" />
     <None Include="Data\ResourceClasses\wood.dat" />
+    <None Include="Data\Resources\tree.dat" />
     <None Include="Data\Resources\stones.dat" />
     <None Include="packages.config" />
   </ItemGroup>
@@ -71,7 +75,8 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>echo Copying data folders...
-xcopy $(ProjectDir)Data $(SolutionDir)plarf\$(OutDir)Data /q /i /s /e /y</PostBuildEvent>
+xcopy $(ProjectDir)Data $(SolutionDir)plarf\$(OutDir)Data /q /i /s /e /y
+xcopy $(ProjectDir)Data $(SolutionDir)plarf.tests\$(OutDir)Data /q /i /s /e /y</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
