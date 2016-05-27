@@ -1,4 +1,5 @@
 ﻿using MoonSharp.Interpreter;
+using Plarf.Engine.Actors;
 using Plarf.Engine.GameObjects;
 using Plarf.Engine.Helpers;
 using Plarf.Engine.Helpers.FileSystem;
@@ -30,6 +31,8 @@ namespace Plarf.Engine
         /// The array of resource templates to be stamped in the world
         /// </summary>
         public IDictionary<string, Resource> ResourceTemplates { get; private set; }
+
+        public Human HumanTemplate { get; private set; }
 
         public World World { get; private set; }
 
@@ -64,6 +67,13 @@ namespace Plarf.Engine
                     var res = new Resource(new DataFile(resfilestream));
                     ResourceTemplates.Add(res.Name, res);
                 }
+
+            HumanTemplate = new Human();
+        }
+
+        public void Run(TimeSpan t)
+        {
+            World.Run(t);
         }
 
         #region Lua Bindings
@@ -80,6 +90,7 @@ namespace Plarf.Engine
             UserData.RegisterType<World>();
             UserData.RegisterType<Location>();
             UserData.RegisterType<Size>();
+            UserData.RegisterType<Human>();
 
             // and the global objects
             LuaScript.Globals.Set("game", UserData.Create(new LuaInterface.LIGame(this)));

@@ -1,2 +1,3 @@
 ﻿Name = Wood
-StackableTo = 30
+StackableTo = 60
+Weight = 1

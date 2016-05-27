@@ -18,7 +18,5 @@ namespace Plarf.Engine.LuaInterface
         /// Writes a message to the debug console
         /// </summary>
         public void WriteLine(object msg) { Debug.WriteLine(msg); }
-
-        public void TestAssertIsTrue(bool b) { Assert.IsTrue(b); }
     }
 }

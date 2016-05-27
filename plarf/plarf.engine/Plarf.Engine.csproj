@@ -45,6 +45,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actors\Actor.cs" />
+    <Compile Include="Actors\Human.cs" />
+    <Compile Include="AI\ActorCentralIntelligence.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameObjects\IPlaceableTemplate.cs" />
     <Compile Include="GameObjects\Placeable.cs" />
@@ -53,6 +56,7 @@
     <Compile Include="GameObjects\World.cs" />
     <Compile Include="Helpers\FileSystem\DataFile.cs" />
     <Compile Include="Helpers\Exceptions\LocationAlreadyInUse.cs" />
+    <Compile Include="Helpers\Types\IRunnable.cs" />
     <Compile Include="Helpers\Types\Location.cs" />
     <Compile Include="Helpers\Types\Size.cs" />
     <Compile Include="Helpers\Types\ValueRange.cs" />
@@ -62,6 +66,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\human.dat" />
     <None Include="Data\ResourceClasses\food.dat" />
     <None Include="Data\ResourceClasses\wood.dat" />
     <None Include="Data\Resources\tree.dat" />

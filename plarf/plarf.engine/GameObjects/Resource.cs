@@ -36,5 +36,9 @@ namespace Plarf.Engine.GameObjects
             Location = location,
             Size = Size
         };
+
+        public override void Run(TimeSpan t)
+        {
+        }
     }
 }

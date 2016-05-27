@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Plarf.Engine.GameObjects
 {
-    public class Placeable
+    public abstract class Placeable : IRunnable
     {
         public Location Location { get; set; }
         public Size Size { get; set; }
@@ -17,5 +17,7 @@ namespace Plarf.Engine.GameObjects
         {
             return x >= Location.X && x <= Location.X + Size.Width - 1 && y >= Location.Y && y <= Location.Y + Size.Height - 1;
         }
+
+        public abstract void Run(TimeSpan t);
     }
 }
