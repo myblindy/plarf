@@ -30,7 +30,7 @@ namespace Plarf.Engine.GameObjects
         public Placeable AddPlaceable(IPlaceableTemplate template, int x, int y) => AddPlaceable(template, new Location(x, y));
         public Placeable AddPlaceable(IPlaceableTemplate template, Location location)
         {
-            if (GetPlaceablesAt((int)location.X, (int)location.Y).Any())
+            if (GetPlaceables((int)location.X, (int)location.Y).Any())
                 throw new LocationAlreadyInUseException(location);
 
             var placeable = template.CreatePlaceableInstance(location);
@@ -53,9 +53,10 @@ namespace Plarf.Engine.GameObjects
             }
         }
 
-        private List<Actor> Actors;
+        public List<Actor> Actors { get; private set; }
 
         public Actor AddActor(Actor template, double x, double y) => AddActor(template, new Location(x, y));
+
         public Actor AddActor(Actor template, Location location)
         {
             var actor = template.CreateActorInstance(location);
@@ -65,11 +66,19 @@ namespace Plarf.Engine.GameObjects
 
         public ActorCentralIntelligence ActorCentralIntelligence { get; private set; }
 
-        public IEnumerable<Placeable> GetPlaceablesAt(int x, int y) => Placeables.Where(r => r.ContainsPoint(x, y));
+        public IEnumerable<Placeable> GetPlaceables(int x, int y) => Placeables.Where(r => r.ContainsPoint(x, y));
+        public IEnumerable<Placeable> GetPlaceables(int x, int y, int w, int h) => Placeables.Where(r => r.Intersects(x, y, w, h));
+
+        internal bool IsLocationValid(Location loc)
+        {
+            return loc.X >= 0 && loc.Y >= 0 && loc.X < Size.Width && loc.Y < Size.Height;
+        }
 
         [MoonSharpHidden]
         public void Run(TimeSpan t)
         {
+            ActorCentralIntelligence.Run(t);
+
             foreach (var placeable in Placeables)
                 placeable.Run(t);
 

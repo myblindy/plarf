@@ -12,6 +12,7 @@ namespace Plarf.Engine.GameObjects
     {
         public Location Location { get; set; }
         public Size Size { get; set; }
+        public bool Passable { get; set; }
 
         public bool ContainsPoint(int x, int y)
         {
@@ -19,5 +20,10 @@ namespace Plarf.Engine.GameObjects
         }
 
         public abstract void Run(TimeSpan t);
+
+        internal bool Intersects(int x, int y, int w, int h)
+        {
+            return !(x > Location.X + Size.Width || x + w < Location.X || y > Location.Y + Size.Height || y + h < Location.Y);
+        }
     }
 }

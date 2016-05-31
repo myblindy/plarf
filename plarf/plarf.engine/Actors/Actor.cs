@@ -1,4 +1,5 @@
-﻿using Plarf.Engine.Helpers.Types;
+﻿using Plarf.Engine.AI;
+using Plarf.Engine.Helpers.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;

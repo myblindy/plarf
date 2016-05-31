@@ -7,6 +7,7 @@ using System.Linq;
 using Plarf.Engine.GameObjects;
 using Plarf.Tests.Helpers;
 using Plarf.Engine.Helpers.Exceptions;
+using Plarf.Engine.Actors;
 
 namespace Plarf.Tests
 {
@@ -47,16 +48,18 @@ namespace Plarf.Tests
             // some basic bounds tests
             for (int x = 0; x <= 1; ++x)
                 for (int y = 0; y <= 1; ++y)
-                    Assert.IsTrue(Game.Instance.World.GetPlaceablesAt(x, y).Cast<Resource>().Single().Name == "Stones");
-            Assert.IsTrue(Game.Instance.World.GetPlaceablesAt(0, 2).Cast<Resource>().Single().Name == "Tree");
+                    Assert.IsTrue(Game.Instance.World.GetPlaceables(x, y).Cast<Resource>().Single().Name == "Stones");
+            Assert.IsTrue(Game.Instance.World.GetPlaceables(0, 2).Cast<Resource>().Single().Name == "Tree");
 
             // actors
-            Game.Instance.World.AddActor(Game.Instance.HumanTemplate, new Location(2, 2));
-            Game.Instance.World.AddActor(Game.Instance.HumanTemplate, new Location(0, 2));
+            var h = Game.Instance.World.AddActor(Game.Instance.HumanTemplate, new Location(2, 2)) as Human;
+            //Game.Instance.World.AddActor(Game.Instance.HumanTemplate, new Location(0, 2));
 
             // simulation loop
             for (int cnt = 0; cnt < 50000; ++cnt)
                 Game.Instance.Run(TimeSpan.FromMilliseconds(1000.0 / 30));
+
+            Assert.IsTrue(h.Location == new Location(0, 0));
         }
 
         [TestMethod]
@@ -77,8 +80,8 @@ namespace Plarf.Tests
             // some basic bounds tests
             for (int x = 0; x <= 1; ++x)
                 for (int y = 0; y <= 1; ++y)
-                    Assert.IsTrue(Game.Instance.World.GetPlaceablesAt(x, y).Cast<Resource>().Single().Name == "Stones");
-            Assert.IsTrue(Game.Instance.World.GetPlaceablesAt(0, 2).Cast<Resource>().Single().Name == "Tree");
+                    Assert.IsTrue(Game.Instance.World.GetPlaceables(x, y).Cast<Resource>().Single().Name == "Stones");
+            Assert.IsTrue(Game.Instance.World.GetPlaceables(0, 2).Cast<Resource>().Single().Name == "Tree");
 
             // actors
             Game.Instance.LuaScript.DoString(@"game.world.addActor(game.humanTemplate, 2, 2);");

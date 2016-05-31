@@ -54,8 +54,10 @@
     <Compile Include="GameObjects\Resource.cs" />
     <Compile Include="GameObjects\ResourceClass.cs" />
     <Compile Include="GameObjects\World.cs" />
+    <Compile Include="Helpers\AStarSearch.cs" />
     <Compile Include="Helpers\FileSystem\DataFile.cs" />
     <Compile Include="Helpers\Exceptions\LocationAlreadyInUse.cs" />
+    <Compile Include="Helpers\PriorityQueue.cs" />
     <Compile Include="Helpers\Types\IRunnable.cs" />
     <Compile Include="Helpers\Types\Location.cs" />
     <Compile Include="Helpers\Types\Size.cs" />

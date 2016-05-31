@@ -68,7 +68,8 @@ namespace Plarf.Engine
                     ResourceTemplates.Add(res.Name, res);
                 }
 
-            HumanTemplate = new Human();
+            using (var resfilestream = VFS.OpenStream("human.dat"))
+                HumanTemplate = new Human(new DataFile(resfilestream));
         }
 
         public void Run(TimeSpan t)
