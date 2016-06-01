@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Plarf.Engine.Helpers.FileSystem
 {
-    class VFS
+    public class VFS
     {
         public static FileStream OpenStream(string path)
         {

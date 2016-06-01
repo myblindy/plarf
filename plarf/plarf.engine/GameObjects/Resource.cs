@@ -17,6 +17,7 @@ namespace Plarf.Engine.GameObjects
         public int Value { get; set; }
         public int MaxWorkers => 1;
         public double GatherDuration { get; internal set; }
+        public string Texture { get; internal set; }
 
         public Resource(dynamic datafile)
         {
@@ -24,9 +25,10 @@ namespace Plarf.Engine.GameObjects
             GatherDuration = Convert.ToDouble(datafile.GatherDuration);
             Size = new Size(DataFile.ToInt32(datafile.Width, 1), DataFile.ToInt32(datafile.Height, 1));
             Passable = true;
+            Texture = datafile.Texture;
 
             Tuple<ValueRange<int>, string> classvalues = DataFile.ToNamedIntValueRange(datafile.Holds);
-            ResourceClass = Game.Instance.ResourceClasses.Single(r => r.Name.Equals(classvalues.Item2, StringComparison.CurrentCultureIgnoreCase));
+            ResourceClass = PlarfGame.Instance.ResourceClasses.Single(r => r.Name.Equals(classvalues.Item2, StringComparison.CurrentCultureIgnoreCase));
             ValueRange = classvalues.Item1;
         }
 
@@ -36,10 +38,11 @@ namespace Plarf.Engine.GameObjects
         {
             Name = Name,
             ResourceClass = ResourceClass,
-            Value = Game.Instance.GetNextRandomInteger(ValueRange),
+            Value = PlarfGame.Instance.GetNextRandomInteger(ValueRange),
             Location = location,
             Size = Size,
-            Passable = true
+            Passable = true,
+            Texture = Texture
         };
 
         public override void Run(TimeSpan t)

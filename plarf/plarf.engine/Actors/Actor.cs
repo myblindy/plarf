@@ -10,7 +10,8 @@ namespace Plarf.Engine.Actors
 {
     public abstract class Actor : IRunnable
     {
-        public Location Location;
+        public Location Location { get; set; }
+        public string Texture { get; set; }
 
         public abstract Actor CreateActorInstance(Location location);
 

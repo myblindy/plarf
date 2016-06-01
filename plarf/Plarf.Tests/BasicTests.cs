@@ -17,47 +17,47 @@ namespace Plarf.Tests
         [TestMethod]
         public void Warmup()
         {
-            Game.Instance.Initialize(new Size(50, 50));
-            Game.Instance.LuaScript.DoString(@"g = game;");
+            PlarfGame.Instance.Initialize(new Size(50, 50));
+            PlarfGame.Instance.LuaScript.DoString(@"g = game;");
         }
 
         [TestMethod]
         public void BasicWorld()
         {
             Resource res;
-            Game.Instance.Initialize(new Size(50, 50));
+            PlarfGame.Instance.Initialize(new Size(50, 50));
 
             // resources
-            res = Game.Instance.World.AddPlaceable(Game.Instance.ResourceTemplates["Stones"], new Location(0, 0)) as Resource;
-            Game.Instance.World.MarkResourceForHarvest(res);
+            res = PlarfGame.Instance.World.AddPlaceable(PlarfGame.Instance.ResourceTemplates["Stones"], new Location(0, 0)) as Resource;
+            PlarfGame.Instance.World.MarkResourceForHarvest(res);
 
-            ExtraAssert.Throws<LocationAlreadyInUseException>(() => Game.Instance.World.AddPlaceable(
-                Game.Instance.ResourceTemplates["Stones"], new Location(0, 1)));
+            ExtraAssert.Throws<LocationAlreadyInUseException>(() => PlarfGame.Instance.World.AddPlaceable(
+                PlarfGame.Instance.ResourceTemplates["Stones"], new Location(0, 1)));
 
-            res = Game.Instance.World.AddPlaceable(Game.Instance.ResourceTemplates["Tree"], new Location(0, 2)) as Resource;
-            Game.Instance.World.MarkResourceForHarvest(res);
-            res = Game.Instance.World.AddPlaceable(Game.Instance.ResourceTemplates["Tree"], new Location(1, 2)) as Resource;
-            Game.Instance.World.MarkResourceForHarvest(res);
+            res = PlarfGame.Instance.World.AddPlaceable(PlarfGame.Instance.ResourceTemplates["Tree"], new Location(0, 2)) as Resource;
+            PlarfGame.Instance.World.MarkResourceForHarvest(res);
+            res = PlarfGame.Instance.World.AddPlaceable(PlarfGame.Instance.ResourceTemplates["Tree"], new Location(1, 2)) as Resource;
+            PlarfGame.Instance.World.MarkResourceForHarvest(res);
 
-            res = Game.Instance.World.AddPlaceable(Game.Instance.ResourceTemplates["Stones"], new Location(0, 3)) as Resource;
-            Game.Instance.World.MarkResourceForHarvest(res);
+            res = PlarfGame.Instance.World.AddPlaceable(PlarfGame.Instance.ResourceTemplates["Stones"], new Location(0, 3)) as Resource;
+            PlarfGame.Instance.World.MarkResourceForHarvest(res);
 
-            ExtraAssert.Throws<LocationAlreadyInUseException>(() => Game.Instance.World.AddPlaceable(
-                Game.Instance.ResourceTemplates["Stones"], new Location(0, 4)));
+            ExtraAssert.Throws<LocationAlreadyInUseException>(() => PlarfGame.Instance.World.AddPlaceable(
+                PlarfGame.Instance.ResourceTemplates["Stones"], new Location(0, 4)));
 
             // some basic bounds tests
             for (int x = 0; x <= 1; ++x)
                 for (int y = 0; y <= 1; ++y)
-                    Assert.IsTrue(Game.Instance.World.GetPlaceables(x, y).Cast<Resource>().Single().Name == "Stones");
-            Assert.IsTrue(Game.Instance.World.GetPlaceables(0, 2).Cast<Resource>().Single().Name == "Tree");
+                    Assert.IsTrue(PlarfGame.Instance.World.GetPlaceables(x, y).Cast<Resource>().Single().Name == "Stones");
+            Assert.IsTrue(PlarfGame.Instance.World.GetPlaceables(0, 2).Cast<Resource>().Single().Name == "Tree");
 
             // actors
-            var h = Game.Instance.World.AddActor(Game.Instance.HumanTemplate, new Location(2, 2)) as Human;
+            var h = PlarfGame.Instance.World.AddActor(PlarfGame.Instance.HumanTemplate, new Location(2, 2)) as Human;
             //Game.Instance.World.AddActor(Game.Instance.HumanTemplate, new Location(0, 2));
 
             // simulation loop
             for (int cnt = 0; cnt < 50000; ++cnt)
-                Game.Instance.Run(TimeSpan.FromMilliseconds(1000.0 / 30));
+                PlarfGame.Instance.Run(TimeSpan.FromMilliseconds(1000.0 / 30));
 
             Assert.IsTrue(h.Location == new Location(0, 0));
         }
@@ -65,31 +65,31 @@ namespace Plarf.Tests
         [TestMethod]
         public void BasicWorldLua()
         {
-            Game.Instance.Initialize(new Size(50, 50));
+            PlarfGame.Instance.Initialize(new Size(50, 50));
 
             // resources
-            Game.Instance.LuaScript.DoString(@"game.world.markResourceForHarvest(game.world.addPlaceable(game.resourceTemplates.Stones, 0, 0));");
-            ExtraAssert.Throws<LocationAlreadyInUseException>(() => Game.Instance.LuaScript.DoString(
+            PlarfGame.Instance.LuaScript.DoString(@"game.world.markResourceForHarvest(game.world.addPlaceable(game.resourceTemplates.Stones, 0, 0));");
+            ExtraAssert.Throws<LocationAlreadyInUseException>(() => PlarfGame.Instance.LuaScript.DoString(
                 @"game.world.addPlaceable(game.resourceTemplates.Stones, 0, 1);"));
-            Game.Instance.LuaScript.DoString(@"game.world.markResourceForHarvest(game.world.addPlaceable(game.resourceTemplates.Tree, 0, 2));");
-            Game.Instance.LuaScript.DoString(@"game.world.markResourceForHarvest(game.world.addPlaceable(game.resourceTemplates.Tree, 1, 2));");
-            Game.Instance.LuaScript.DoString(@"game.world.markResourceForHarvest(game.world.addPlaceable(game.resourceTemplates.Stones, 0, 3));");
-            ExtraAssert.Throws<LocationAlreadyInUseException>(() => Game.Instance.LuaScript.DoString(
+            PlarfGame.Instance.LuaScript.DoString(@"game.world.markResourceForHarvest(game.world.addPlaceable(game.resourceTemplates.Tree, 0, 2));");
+            PlarfGame.Instance.LuaScript.DoString(@"game.world.markResourceForHarvest(game.world.addPlaceable(game.resourceTemplates.Tree, 1, 2));");
+            PlarfGame.Instance.LuaScript.DoString(@"game.world.markResourceForHarvest(game.world.addPlaceable(game.resourceTemplates.Stones, 0, 3));");
+            ExtraAssert.Throws<LocationAlreadyInUseException>(() => PlarfGame.Instance.LuaScript.DoString(
                 @"game.world.addPlaceable(game.resourceTemplates.Stones, 0, 4);"));
 
             // some basic bounds tests
             for (int x = 0; x <= 1; ++x)
                 for (int y = 0; y <= 1; ++y)
-                    Assert.IsTrue(Game.Instance.World.GetPlaceables(x, y).Cast<Resource>().Single().Name == "Stones");
-            Assert.IsTrue(Game.Instance.World.GetPlaceables(0, 2).Cast<Resource>().Single().Name == "Tree");
+                    Assert.IsTrue(PlarfGame.Instance.World.GetPlaceables(x, y).Cast<Resource>().Single().Name == "Stones");
+            Assert.IsTrue(PlarfGame.Instance.World.GetPlaceables(0, 2).Cast<Resource>().Single().Name == "Tree");
 
             // actors
-            Game.Instance.LuaScript.DoString(@"game.world.addActor(game.humanTemplate, 2, 2);");
-            Game.Instance.LuaScript.DoString(@"game.world.addActor(game.humanTemplate, 0, 2);");
+            PlarfGame.Instance.LuaScript.DoString(@"game.world.addActor(game.humanTemplate, 2, 2);");
+            PlarfGame.Instance.LuaScript.DoString(@"game.world.addActor(game.humanTemplate, 0, 2);");
 
             // simulation loop
             for (int cnt = 0; cnt < 50000; ++cnt)
-                Game.Instance.Run(TimeSpan.FromMilliseconds(1000.0 / 30));
+                PlarfGame.Instance.Run(TimeSpan.FromMilliseconds(1000.0 / 30));
         }
     }
 }

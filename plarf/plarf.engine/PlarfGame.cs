@@ -12,10 +12,10 @@ using System.Threading.Tasks;
 
 namespace Plarf.Engine
 {
-    public class Game
+    public class PlarfGame
     {
-        public static Game Instance { get; private set; } = new Game();
-        private Game() { }
+        public static PlarfGame Instance { get; private set; } = new PlarfGame();
+        private PlarfGame() { }
 
         /// <summary>
         /// The main Lua script object

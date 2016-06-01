@@ -25,7 +25,7 @@ namespace Plarf.Engine.GameObjects
             ActorCentralIntelligence = new ActorCentralIntelligence();
         }
 
-        private List<Placeable> Placeables;
+        public List<Placeable> Placeables { get; private set; }
 
         public Placeable AddPlaceable(IPlaceableTemplate template, int x, int y) => AddPlaceable(template, new Location(x, y));
         public Placeable AddPlaceable(IPlaceableTemplate template, Location location)

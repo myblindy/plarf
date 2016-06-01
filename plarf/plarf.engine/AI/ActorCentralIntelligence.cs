@@ -27,7 +27,7 @@ namespace Plarf.Engine.AI
             get
             {
                 if (Type == JobType.Harvest)
-                    return !(Game.Instance.World.Actors.OfType<Human>().Count(a => a.AssignedJob == this) == ((Resource)Target).MaxWorkers);
+                    return !(PlarfGame.Instance.World.Actors.OfType<Human>().Count(a => a.AssignedJob == this) == ((Resource)Target).MaxWorkers);
                 throw new InvalidOperationException();
             }
         }
@@ -52,6 +52,7 @@ namespace Plarf.Engine.AI
     {
         private List<Job> Jobs = new List<Job>();
 
+        [DebuggerDisplay("{Location}")]
         class AStarNode : AStarSearch.IHasNeighbours<AStarNode>
         {
             public readonly Location Location;
@@ -62,31 +63,31 @@ namespace Plarf.Engine.AI
             {
                 get
                 {
-                    var placeables = Game.Instance.World.GetPlaceables((int)Location.X - 1, (int)Location.Y - 1, 2, 2).ToArray();
+                    var placeables = PlarfGame.Instance.World.GetPlaceables((int)Location.X - 1, (int)Location.Y - 1, 2, 2).ToArray();
 
                     var loc = Location.Offset(-1, -1);
-                    if (Game.Instance.World.IsLocationValid(loc) && !placeables.Any(p => !p.Passable && p.Location == loc))
+                    if (PlarfGame.Instance.World.IsLocationValid(loc) && !placeables.Any(p => !p.Passable && p.Location == loc))
                         yield return new AStarNode(loc);
                     loc = Location.Offset(0, -1);
-                    if (Game.Instance.World.IsLocationValid(loc) && !placeables.Any(p => !p.Passable && p.Location == loc))
+                    if (PlarfGame.Instance.World.IsLocationValid(loc) && !placeables.Any(p => !p.Passable && p.Location == loc))
                         yield return new AStarNode(loc);
                     loc = Location.Offset(1, -1);
-                    if (Game.Instance.World.IsLocationValid(loc) && !placeables.Any(p => !p.Passable && p.Location == loc))
+                    if (PlarfGame.Instance.World.IsLocationValid(loc) && !placeables.Any(p => !p.Passable && p.Location == loc))
                         yield return new AStarNode(loc);
                     loc = Location.Offset(-1, 0);
-                    if (Game.Instance.World.IsLocationValid(loc) && !placeables.Any(p => !p.Passable && p.Location == loc))
+                    if (PlarfGame.Instance.World.IsLocationValid(loc) && !placeables.Any(p => !p.Passable && p.Location == loc))
                         yield return new AStarNode(loc);
                     loc = Location.Offset(1, 0);
-                    if (Game.Instance.World.IsLocationValid(loc) && !placeables.Any(p => !p.Passable && p.Location == loc))
+                    if (PlarfGame.Instance.World.IsLocationValid(loc) && !placeables.Any(p => !p.Passable && p.Location == loc))
                         yield return new AStarNode(loc);
                     loc = Location.Offset(-1, 1);
-                    if (Game.Instance.World.IsLocationValid(loc) && !placeables.Any(p => !p.Passable && p.Location == loc))
+                    if (PlarfGame.Instance.World.IsLocationValid(loc) && !placeables.Any(p => !p.Passable && p.Location == loc))
                         yield return new AStarNode(loc);
                     loc = Location.Offset(0, 1);
-                    if (Game.Instance.World.IsLocationValid(loc) && !placeables.Any(p => !p.Passable && p.Location == loc))
+                    if (PlarfGame.Instance.World.IsLocationValid(loc) && !placeables.Any(p => !p.Passable && p.Location == loc))
                         yield return new AStarNode(loc);
                     loc = Location.Offset(1, 1);
-                    if (Game.Instance.World.IsLocationValid(loc) && !placeables.Any(p => !p.Passable && p.Location == loc))
+                    if (PlarfGame.Instance.World.IsLocationValid(loc) && !placeables.Any(p => !p.Passable && p.Location == loc))
                         yield return new AStarNode(loc);
                 }
             }
@@ -109,7 +110,7 @@ namespace Plarf.Engine.AI
         {
             Jobs.RemoveAll(j => j.Target == res);
 
-            foreach (var actor in Game.Instance.World.Actors.OfType<Human>())
+            foreach (var actor in PlarfGame.Instance.World.Actors.OfType<Human>())
                 if (actor.AssignedJob.Target == res)
                     actor.AssignedJob = null;
         }

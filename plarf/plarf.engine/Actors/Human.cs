@@ -19,6 +19,7 @@ namespace Plarf.Engine.Actors
         {
             MovementSpeed = Convert.ToDouble(datafile.MovementSpeed);
             GatherSpeed = Convert.ToDouble(datafile.GatherSpeed);
+            Texture = datafile.Texture;
         }
 
         public Human(Human template)
@@ -26,6 +27,7 @@ namespace Plarf.Engine.Actors
             MovementSpeed = template.MovementSpeed;
             GatherSpeed = template.GatherSpeed;
             Location = template.Location;
+            Texture = template.Texture;
         }
 
         public override Actor CreateActorInstance(Location location) => new Human(this) { Location = location };
@@ -41,14 +43,14 @@ namespace Plarf.Engine.Actors
         public override void Run(TimeSpan t)
         {
             if (AssignedJob == null)
-                AssignedJob = Game.Instance.World.ActorCentralIntelligence.GetAvailableJob();
+                AssignedJob = PlarfGame.Instance.World.ActorCentralIntelligence.GetAvailableJob();
 
             if (AssignedJob != AIProcessedJob)
             {
                 AIProcessedJob = AssignedJob;
 
                 // break job down into steps
-                JobSteps = Game.Instance.World.ActorCentralIntelligence.GetJobStepsFromJob(AssignedJob, this);
+                JobSteps = PlarfGame.Instance.World.ActorCentralIntelligence.GetJobStepsFromJob(AssignedJob, this);
 
                 if (!JobSteps.Any())
                     return;

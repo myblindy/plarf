@@ -48,7 +48,7 @@
     <Compile Include="Actors\Actor.cs" />
     <Compile Include="Actors\Human.cs" />
     <Compile Include="AI\ActorCentralIntelligence.cs" />
-    <Compile Include="Game.cs" />
+    <Compile Include="PlarfGame.cs" />
     <Compile Include="GameObjects\IPlaceableTemplate.cs" />
     <Compile Include="GameObjects\Placeable.cs" />
     <Compile Include="GameObjects\Resource.cs" />
@@ -78,11 +78,15 @@
   <ItemGroup>
     <None Include="Data\ResourceClasses\stone.dat" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Data\Resources\tree.png" />
+    <Content Include="Data\Resources\stones.png" />
+    <Content Include="Data\human.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>echo Copying data folders...
-xcopy $(ProjectDir)Data $(SolutionDir)plarf\$(OutDir)Data /q /i /s /e /y
+xcopy $(ProjectDir)Data $(SolutionDir)plarf.monogame\bin\windows\x86\$(ConfigurationName)\Data /q /i /s /e /y
 xcopy $(ProjectDir)Data $(SolutionDir)plarf.tests\$(OutDir)Data /q /i /s /e /y</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -16,7 +16,7 @@ namespace Plarf.Engine.LuaInterface
     class LIGame
     {
         [MoonSharpHidden]
-        public Game Game { get; private set; }
+        public PlarfGame Game { get; private set; }
 
         /// <summary>
         /// Provides the debugging context
@@ -34,7 +34,7 @@ namespace Plarf.Engine.LuaInterface
 
         public Human HumanTemplate => Game.HumanTemplate;
 
-        public LIGame(Game game)
+        public LIGame(PlarfGame game)
         {
             Game = game;
         }
