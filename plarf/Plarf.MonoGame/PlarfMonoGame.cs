@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Plarf.Engine;
+using Plarf.Engine.Actors;
 using Plarf.Engine.GameObjects;
 using Plarf.Engine.Helpers.FileSystem;
 using Plarf.Engine.Helpers.Types;
@@ -21,6 +22,7 @@ namespace Plarf.MonoGame
 
         Texture2D GrassTexture, LineTexture;
         IDictionary<string, Texture2D> MiscTextures = new Dictionary<string, Texture2D>();
+        SpriteFont DefaultFont;
 
         public PlarfMonoGame()
         {
@@ -33,15 +35,15 @@ namespace Plarf.MonoGame
             PlarfGame.Instance.Initialize(new Size(50, 50));
 
             Resource res;
-            res = PlarfGame.Instance.World.AddPlaceable(PlarfGame.Instance.ResourceTemplates["Stones"], 0, 0) as Resource;
+            res = PlarfGame.Instance.World.AddPlaceable(PlarfGame.Instance.ResourceTemplates["Stones"], 3, 3) as Resource;
             PlarfGame.Instance.World.MarkResourceForHarvest(res);
-            res = PlarfGame.Instance.World.AddPlaceable(PlarfGame.Instance.ResourceTemplates["Stones"], 2, 0) as Resource;
+            res = PlarfGame.Instance.World.AddPlaceable(PlarfGame.Instance.ResourceTemplates["Stones"], 5, 3) as Resource;
             PlarfGame.Instance.World.MarkResourceForHarvest(res);
-            res = PlarfGame.Instance.World.AddPlaceable(PlarfGame.Instance.ResourceTemplates["Stones"], 4, 0) as Resource;
+            res = PlarfGame.Instance.World.AddPlaceable(PlarfGame.Instance.ResourceTemplates["Stones"], 9, 3) as Resource;
             PlarfGame.Instance.World.MarkResourceForHarvest(res);
 
-            PlarfGame.Instance.World.AddActor(PlarfGame.Instance.HumanTemplate, 1, 5);
-            PlarfGame.Instance.World.AddActor(PlarfGame.Instance.HumanTemplate, 4, 7);
+            PlarfGame.Instance.World.AddActor(PlarfGame.Instance.HumanTemplate, 0, 0);
+            PlarfGame.Instance.World.AddActor(PlarfGame.Instance.HumanTemplate, 6, 7);
 
             base.Initialize();
         }
@@ -68,6 +70,9 @@ namespace Plarf.MonoGame
             // the line texture
             LineTexture = new Texture2D(GraphicsDevice, 1, 1);
             LineTexture.SetData(new Color[] { Color.White });
+
+            // fonts
+            DefaultFont = Content.Load<SpriteFont>("Fonts/DefaultFont");
         }
 
         protected override void UnloadContent()
@@ -89,8 +94,10 @@ namespace Plarf.MonoGame
         {
             GraphicsDevice.Clear(Color.Black);
 
-            const int gridsize = 20;
+            const int gridsize = 20, logH = 90;
 
+            // the main view
+            GraphicsDevice.Viewport = new Viewport(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height - logH);
             spriteBatch.Begin();
 
             // background
@@ -113,8 +120,37 @@ namespace Plarf.MonoGame
             // actors
             foreach (var actor in PlarfGame.Instance.World.Actors)
                 if (MiscTextures.ContainsKey(actor.Texture))
+                {
                     spriteBatch.Draw(MiscTextures[actor.Texture],
                         new Rectangle((int)(actor.Location.X * gridsize), (int)(actor.Location.Y * gridsize), gridsize, gridsize), Color.White);
+
+                    // draw the AI target
+                    var h = actor as Human;
+                    if (h?.AssignedJob != null && h.AssignedJob.Target != null)
+                    {
+                        spriteBatch.DrawLine(LineTexture,
+                            new Vector2((float)((h.Location.X + .5) * gridsize), (float)((h.Location.Y + .5) * gridsize)),
+                            new Vector2((float)((h.AssignedJob.Target.Location.X + h.AssignedJob.Target.Size.Width / 2.0) * gridsize), (float)((h.AssignedJob.Target.Location.Y + h.AssignedJob.Target.Size.Height / 2.0) * gridsize)),
+                            Color.Yellow);
+                    }
+                }
+
+            spriteBatch.End();
+
+            // the console
+            GraphicsDevice.Viewport = new Viewport(0, Window.ClientBounds.Height - logH, Window.ClientBounds.Width, logH);
+            spriteBatch.Begin();
+
+            // humans log
+            int idx = 0;
+            foreach (var h in PlarfGame.Instance.World.Actors.OfType<Human>())
+            {
+                spriteBatch.DrawString(DefaultFont, string.Format("H{0} @ {1} carrying {2} assigned {3} step {4}",
+                    idx, h.Location, h.ResourcesCarried, h.AssignedJob, h.CurrentJobStep),
+                    new Vector2(0, idx * 15), Color.White);
+
+                ++idx;
+            }
 
             spriteBatch.End();
 

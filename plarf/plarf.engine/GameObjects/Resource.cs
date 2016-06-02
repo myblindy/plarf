@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Plarf.Engine.Actors;
 
 namespace Plarf.Engine.GameObjects
 {
@@ -14,10 +15,10 @@ namespace Plarf.Engine.GameObjects
         public string Name { get; private set; }
         public ResourceClass ResourceClass { get; private set; }
         public ValueRange<int> ValueRange { get; private set; }
-        public int Value { get; set; }
-        public int MaxWorkers => 1;
-        public double GatherDuration { get; internal set; }
-        public string Texture { get; internal set; }
+        public int AmountLeft { get; set; }
+        public int MaxWorkers { get; private set; }
+        public double GatherDuration { get; private set; }
+        public string Texture { get; private set; }
 
         public Resource(dynamic datafile)
         {
@@ -26,6 +27,7 @@ namespace Plarf.Engine.GameObjects
             Size = new Size(DataFile.ToInt32(datafile.Width, 1), DataFile.ToInt32(datafile.Height, 1));
             Passable = true;
             Texture = datafile.Texture;
+            MaxWorkers = Convert.ToInt32(datafile.MaxWorkers);
 
             Tuple<ValueRange<int>, string> classvalues = DataFile.ToNamedIntValueRange(datafile.Holds);
             ResourceClass = PlarfGame.Instance.ResourceClasses.Single(r => r.Name.Equals(classvalues.Item2, StringComparison.CurrentCultureIgnoreCase));
@@ -38,15 +40,23 @@ namespace Plarf.Engine.GameObjects
         {
             Name = Name,
             ResourceClass = ResourceClass,
-            Value = PlarfGame.Instance.GetNextRandomInteger(ValueRange),
+            AmountLeft = PlarfGame.Instance.GetNextRandomInteger(ValueRange),
             Location = location,
             Size = Size,
             Passable = true,
-            Texture = Texture
+            Texture = Texture,
+            MaxWorkers = MaxWorkers
         };
 
         public override void Run(TimeSpan t)
         {
         }
+
+        internal void GatherFinished(Human human, int amount)
+        {
+            AmountLeft -= human.Carry(ResourceClass, Math.Min(amount, AmountLeft));
+        }
+
+        public override string ToString() => Name + " (" + AmountLeft + ")";
     }
 }

@@ -3,4 +3,5 @@ Holds = 60-80 Wood
 Width = 1
 Height = 1
 GatherDuration = 4
+MaxWorkers = 4
 Texture = Resources/Tree.png

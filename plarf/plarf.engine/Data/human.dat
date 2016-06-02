@@ -1,3 +1,4 @@
 ﻿MovementSpeed = 0.5
 GatherSpeed = 0.3
+MaxCarryWeight = 80
 Texture = human.png

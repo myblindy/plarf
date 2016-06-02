@@ -14,10 +14,10 @@ namespace Plarf.Engine.AI
     public enum JobType
     {
         Harvest,
-        StepMove
+        StepMove,
+        Invalid
     }
 
-    [DebuggerDisplay("{Type} {Target}, Available={Available}")]
     public class Job
     {
         public JobType Type { get; set; }
@@ -31,6 +31,8 @@ namespace Plarf.Engine.AI
                 throw new InvalidOperationException();
             }
         }
+
+        public override string ToString() => Type + " " + Target + (Available ? " (A)" : "");
     }
 
     [DebuggerDisplay("{Type} @ {Location} on {Placeable}")]
@@ -46,9 +48,13 @@ namespace Plarf.Engine.AI
             Type = type;
             Placeable = placeable;
         }
+
+        public JobStep(JobType type) : this(null, type, null) { }
+
+        public override string ToString() => Type + " @ " + Location + (Placeable == null ? "" : " on " + Placeable);
     }
 
-    public class ActorCentralIntelligence : IRunnable
+    public class ActorCentralIntelligence
     {
         private List<Job> Jobs = new List<Job>();
 
@@ -115,10 +121,8 @@ namespace Plarf.Engine.AI
                     actor.AssignedJob = null;
         }
 
-        public Job GetAvailableJob()
-        {
-            return Jobs.FirstOrDefault(j => j.Available);
-        }
+        public Job GetAvailableJob(Actor actor) =>
+            Jobs.OrderBy(j => actor.Location.Distance(j.Target.Location)).FirstOrDefault(j => j.Available);
 
         public JobStep[] GetJobStepsFromJob(Job job, Actor actor)
         {
@@ -134,17 +138,13 @@ namespace Plarf.Engine.AI
                     n => Location.Distance(n.Location, job.Target.Location));
 
                 return path.Select((n, i) => new JobStep(n.Location, JobType.StepMove, null))
-                    .Reverse().Skip(1)
-                    .Concat(Enumerable.Repeat(new JobStep(job.Target.Location, job.Type, job.Target), 1))
+                    .SkipWhile(w => job.Target.ContainsPoint(w.Location))                                  // skip anything inside the resource, stop just outside
+                    .Reverse().Skip(1)                                                                     // reverse since the path returned is from the resource to us, then skip the actor's location (first path item)
+                    .Concat(Enumerable.Repeat(new JobStep(job.Target.Location, job.Type, job.Target), 1))  // after we get to the resource, queue a harvest step
                     .ToArray();
             }
 
             throw new InvalidOperationException();
-        }
-
-        public void Run(TimeSpan t)
-        {
-
         }
     }
 }

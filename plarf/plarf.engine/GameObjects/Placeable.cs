@@ -14,10 +14,10 @@ namespace Plarf.Engine.GameObjects
         public Size Size { get; set; }
         public bool Passable { get; set; }
 
-        public bool ContainsPoint(int x, int y)
-        {
-            return x >= Location.X && x <= Location.X + Size.Width - 1 && y >= Location.Y && y <= Location.Y + Size.Height - 1;
-        }
+        public bool ContainsPoint(double x, double y) =>
+            x >= Location.X && x <= Location.X + Size.Width - 1 && y >= Location.Y && y <= Location.Y + Size.Height - 1;
+
+        public bool ContainsPoint(Location loc) => ContainsPoint(loc.X, loc.Y);
 
         public abstract void Run(TimeSpan t);
 

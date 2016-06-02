@@ -77,8 +77,6 @@ namespace Plarf.Engine.GameObjects
         [MoonSharpHidden]
         public void Run(TimeSpan t)
         {
-            ActorCentralIntelligence.Run(t);
-
             foreach (var placeable in Placeables)
                 placeable.Run(t);
 

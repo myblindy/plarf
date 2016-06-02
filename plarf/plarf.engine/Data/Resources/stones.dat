@@ -3,4 +3,5 @@ Holds = 900-1200 Stone
 Width = 2
 Height = 2
 GatherDuration = 4
+MaxWorkers = 4
 Texture = Resources/Stones.png
