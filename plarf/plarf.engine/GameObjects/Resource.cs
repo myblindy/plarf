@@ -36,7 +36,7 @@ namespace Plarf.Engine.GameObjects
 
         public Resource() { }
 
-        public Placeable CreatePlaceableInstance(Location location) => new Resource
+        public Placeable CreatePlaceableInstance(Location location, Size _size) => new Resource
         {
             Name = Name,
             ResourceClass = ResourceClass,
@@ -59,5 +59,7 @@ namespace Plarf.Engine.GameObjects
         }
 
         public override string ToString() => Name + " (" + AmountLeft + ")";
+
+        public override void OnAdded() { }
     }
 }

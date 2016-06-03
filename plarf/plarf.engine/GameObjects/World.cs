@@ -27,14 +27,24 @@ namespace Plarf.Engine.GameObjects
 
         public List<Placeable> Placeables { get; private set; }
 
-        public Placeable AddPlaceable(IPlaceableTemplate template, int x, int y) => AddPlaceable(template, new Location(x, y));
-        public Placeable AddPlaceable(IPlaceableTemplate template, Location location)
+        public Placeable AddPlaceable(IPlaceableTemplate template, int x, int y, int w = 0, int h = 0) =>
+            AddPlaceable(template, new Location(x, y), w == 0 && h == 0 ? null : new Size(w, h));
+        public Placeable AddPlaceable(IPlaceableTemplate template, Location loc, Size sz = null)
         {
-            if (GetPlaceables((int)location.X, (int)location.Y).Any())
-                throw new LocationAlreadyInUseException(location);
+            if (sz == null)
+            {
+                if (GetPlaceables((int)loc.X, (int)loc.Y).Any())
+                    throw new LocationAlreadyInUseException(loc);
+            }
+            else
+            {
+                if (GetPlaceables((int)loc.X, (int)loc.Y, sz.Width, sz.Height).Any())
+                    throw new LocationAlreadyInUseException(loc);
+            }
 
-            var placeable = template.CreatePlaceableInstance(location);
+            var placeable = template.CreatePlaceableInstance(loc, sz);
             Placeables.Add(placeable);
+            placeable.OnAdded();
             return placeable;
         }
 

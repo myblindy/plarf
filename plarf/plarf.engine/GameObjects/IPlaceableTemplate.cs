@@ -10,6 +10,7 @@ namespace Plarf.Engine.GameObjects
 {
     public interface IPlaceableTemplate
     {
-        Placeable CreatePlaceableInstance(Location location);
+        Placeable CreatePlaceableInstance(Location location, Size size);
+        void OnAdded();
     }
 }

@@ -46,6 +46,8 @@ namespace Plarf.MonoGame
             PlarfGame.Instance.World.AddActor(PlarfGame.Instance.HumanTemplate, 0, 0);
             PlarfGame.Instance.World.AddActor(PlarfGame.Instance.HumanTemplate, 6, 7);
 
+            PlarfGame.Instance.World.AddPlaceable(PlarfGame.Instance.BuildingClasses["Storage"], 0, 8, 12, 4);
+
             base.Initialize();
         }
 
@@ -62,6 +64,12 @@ namespace Plarf.MonoGame
                 if (!MiscTextures.ContainsKey(restemplate.Value.Texture) && !string.IsNullOrWhiteSpace(restemplate.Value.Texture))
                     using (var stream = VFS.OpenStream(restemplate.Value.Texture))
                         MiscTextures.Add(restemplate.Value.Texture, TextureHelpers.FromStream(stream, GraphicsDevice));
+
+            // building textures
+            foreach (var bclass in PlarfGame.Instance.BuildingClasses)
+                if (!MiscTextures.ContainsKey(bclass.Value.Texture) && !string.IsNullOrWhiteSpace(bclass.Value.Texture))
+                    using (var stream = VFS.OpenStream(bclass.Value.Texture))
+                        MiscTextures.Add(bclass.Value.Texture, TextureHelpers.FromStream(stream, GraphicsDevice));
 
             // actor resources
             if (!MiscTextures.ContainsKey(PlarfGame.Instance.HumanTemplate.Texture) && !string.IsNullOrWhiteSpace(PlarfGame.Instance.HumanTemplate.Texture))
@@ -142,6 +150,12 @@ namespace Plarf.MonoGame
                             new Vector2((float)((h.AssignedJob.Target.Location.X + h.AssignedJob.Target.Size.Width / 2.0) * gridsize), (float)((h.AssignedJob.Target.Location.Y + h.AssignedJob.Target.Size.Height / 2.0) * gridsize)),
                             Color.Yellow);
                 }
+
+            // buildings
+            foreach (var b in PlarfGame.Instance.World.Placeables.OfType<Building>())
+                if (MiscTextures.ContainsKey(b.Texture))
+                    spriteBatch.Draw(MiscTextures[b.Texture],
+                        new Rectangle((int)(b.Location.X * gridsize), (int)(b.Location.Y * gridsize), gridsize * b.Size.Width, gridsize * b.Size.Height), Color.White);
 
             spriteBatch.End();
 

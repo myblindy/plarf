@@ -44,7 +44,7 @@ namespace Plarf.Engine.Helpers
 
         static public Path<Node> FindPath<Node>(
             Node start,
-            Node destination,
+            ISet<Node> destinations,
             Func<Node, Node, double> distance,
             Func<Node, double> estimate)
             where Node : IHasNeighbours<Node>
@@ -57,7 +57,7 @@ namespace Plarf.Engine.Helpers
                 var path = queue.Dequeue();
                 if (closed.Contains(path.LastStep))
                     continue;
-                if (path.LastStep.Equals(destination))
+                if (destinations.Contains(path.LastStep))
                     return path;
                 closed.Add(path.LastStep);
                 foreach (Node n in path.LastStep.Neighbours)

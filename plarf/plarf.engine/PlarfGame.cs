@@ -34,6 +34,8 @@ namespace Plarf.Engine
 
         public Human HumanTemplate { get; private set; }
 
+        public IDictionary<string, Building> BuildingClasses { get; private set; }
+
         public World World { get; private set; }
 
         private Random Random;
@@ -68,8 +70,16 @@ namespace Plarf.Engine
                     ResourceTemplates.Add(res.Name, res);
                 }
 
-            using (var resfilestream = VFS.OpenStream("human.dat"))
-                HumanTemplate = new Human(new DataFile(resfilestream));
+            using (var hfilestream = VFS.OpenStream("human.dat"))
+                HumanTemplate = new Human(new DataFile(hfilestream));
+
+            BuildingClasses = new Dictionary<string, Building>();
+            foreach (var bfile in VFS.GetFiles(@"Buildings", "*.dat"))
+                using (var bfilestream = VFS.OpenStream(bfile))
+                {
+                    var b = Building.FromDataFile(new DataFile(bfilestream));
+                    BuildingClasses.Add(b.Name, b);
+                }
         }
 
         public void Run(TimeSpan t)

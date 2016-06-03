@@ -52,6 +52,8 @@
     <Compile Include="Actors\Actor.cs" />
     <Compile Include="Actors\Human.cs" />
     <Compile Include="AI\ActorCentralIntelligence.cs" />
+    <Compile Include="GameObjects\Building.cs" />
+    <Compile Include="GameObjects\BuildingFlex.cs" />
     <Compile Include="Helpers\Types\ResourceBundle.cs" />
     <Compile Include="PlarfGame.cs" />
     <Compile Include="GameObjects\IPlaceableTemplate.cs" />
@@ -85,6 +87,7 @@
     <None Include="Data\ResourceClasses\stone.dat" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Data\Buildings\storage.png" />
     <Content Include="Data\Resources\tree.png" />
     <Content Include="Data\Resources\stones.png" />
     <Content Include="Data\human.png" />

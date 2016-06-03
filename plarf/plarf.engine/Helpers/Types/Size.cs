@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Plarf.Engine.Helpers.Types
 {
-    public struct Size
+    public class Size
     {
         public int Width { get; set; }
         public int Height { get; set; }

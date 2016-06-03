@@ -14,6 +14,7 @@ namespace Plarf.Engine.AI
     public enum JobType
     {
         Harvest,
+        DropResources,
         StepMove,
         Invalid
     }
@@ -22,17 +23,17 @@ namespace Plarf.Engine.AI
     {
         public JobType Type { get; set; }
         public Placeable Target { get; set; }
-        public bool Available
+        public bool IsAvailable(Human human)
         {
-            get
-            {
-                if (Type == JobType.Harvest)
-                    return !(PlarfGame.Instance.World.Actors.OfType<Human>().Count(a => a.AssignedJob == this) == ((Resource)Target).MaxWorkers);
-                throw new InvalidOperationException();
-            }
+            if (Type == JobType.Harvest)
+                return !(PlarfGame.Instance.World.Actors.OfType<Human>().Count(a => a.AssignedJob == this) == ((Resource)Target).MaxWorkers)
+                    && !human.FullForResourceClass(((Resource)Target).ResourceClass);
+            if (Type == JobType.DropResources)
+                return human.ResourcesCarried.Any(r => r.Value > 0);
+            throw new InvalidOperationException();
         }
 
-        public override string ToString() => Type + " " + Target + (Available ? " (A)" : "");
+        public override string ToString() => Type + " " + Target;
     }
 
     [DebuggerDisplay("{Type} @ {Location} on {Placeable}")]
@@ -121,26 +122,45 @@ namespace Plarf.Engine.AI
                     actor.AssignedJob = null;
         }
 
-        public Job GetAvailableJob(Actor actor, Job last) =>
-            Jobs.OrderBy(j => actor.Location.Distance(j.Target.Location)).FirstOrDefault(j => j.Available);
+        public void AddStorageJob(Building b)
+        {
+            Jobs.Add(new Job
+            {
+                Type = JobType.DropResources,
+                Target = b
+            });
+        }
+
+        public Job GetAvailableJob(Human human, Job last) =>
+            Jobs.OrderBy(j => human.Location.Distance(j.Target.Location)).FirstOrDefault(j => j.IsAvailable(human));
 
         public JobStep[] GetJobStepsFromJob(Job job, Actor actor)
         {
             if (job == null)
-                return new JobStep[0];
+                return null;
 
-            if (job.Type == JobType.Harvest)
+            Func<AStarSearch.Path<AStarNode>> buildpath = () =>
             {
-                var path = AStarSearch.FindPath(
-                    new AStarNode(actor.Location),
-                    new AStarNode(job.Target.Location),
-                    (n1, n2) => Location.Distance(n1.Location, n2.Location),
-                    n => Location.Distance(n.Location, job.Target.Location));
+                var destset = new HashSet<AStarNode>();
+                for (int x = (int)job.Target.Location.X; x < job.Target.Location.X + job.Target.Size.Width; ++x)
+                    for (int y = (int)job.Target.Location.Y; y < job.Target.Location.Y + job.Target.Size.Height; ++y)
+                        destset.Add(new AStarNode(new Location(x, y)));
+
+                return AStarSearch.FindPath(
+                        new AStarNode(actor.Location),
+                        destset,
+                        (n1, n2) => Location.Distance(n1.Location, n2.Location),
+                        n => Location.Distance(n.Location, new Location(job.Target.Location.X + job.Target.Size.Width / 2, job.Target.Location.Y + job.Target.Size.Height / 2)));
+            };
+
+            if (job.Type == JobType.Harvest || job.Type == JobType.DropResources)
+            {
+                var path = buildpath();
 
                 return path.Select((n, i) => new JobStep(n.Location, JobType.StepMove, null))
-                    .SkipWhile(w => job.Target.ContainsPoint(w.Location))                                  // skip anything inside the resource, stop just outside
+                    .SkipWhile(w => job.Target.ContainsPoint(w.Location))                                  // skip anything inside the target, stop just outside
                     .Reverse().Skip(1)                                                                     // reverse since the path returned is from the resource to us, then skip the actor's location (first path item)
-                    .Concat(Enumerable.Repeat(new JobStep(job.Target.Location, job.Type, job.Target), 1))  // after we get to the resource, queue a harvest step
+                    .Concat(Enumerable.Repeat(new JobStep(job.Target.Location, job.Type, job.Target), 1))  // after we get to the target, queue an action step (harvest, drop, etc)
                     .ToArray();
             }
 

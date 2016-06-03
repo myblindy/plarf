@@ -47,6 +47,12 @@ namespace Plarf.Engine.Helpers.FileSystem
                 Convert.ToInt32(property.Substring(dashidx + 1)));
         }
 
+        public static bool ToBoolean(dynamic property, bool def = false)
+        {
+            return property == null ? def :
+                property.Equals("yes", StringComparison.InvariantCultureIgnoreCase) || property.Equals("true", StringComparison.InvariantCultureIgnoreCase) || property == "1" ? true : false;
+        }
+
         public static Tuple<ValueRange<int>, string> ToNamedIntValueRange(dynamic property)
         {
             var p = (string)property;

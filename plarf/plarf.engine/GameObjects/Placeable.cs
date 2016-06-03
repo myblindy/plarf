@@ -21,6 +21,8 @@ namespace Plarf.Engine.GameObjects
 
         public abstract void Run(TimeSpan t);
 
+        public abstract void OnAdded();
+
         internal bool Intersects(int x, int y, int w, int h)
         {
             return !(x > Location.X + Size.Width || x + w < Location.X || y > Location.Y + Size.Height || y + h < Location.Y);

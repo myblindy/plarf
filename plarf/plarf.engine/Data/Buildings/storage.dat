@@ -1,0 +1,9 @@
+﻿Name = Storage
+Texture = Buildings/storage.png
+Passable = true
+BuildingType = flex
+FlexWidth = 1-20
+FlexHeight = 1-20
+
+Function = storage
+StorageAccepted = all

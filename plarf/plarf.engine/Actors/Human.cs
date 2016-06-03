@@ -43,7 +43,7 @@ namespace Plarf.Engine.Actors
         public double JobStepBuildup { get; set; } = 0;
         public double JobStepDuration { get; set; } = 0;
         protected int JobStepIndex = 0;
-        public JobStep CurrentJobStep => JobStepIndex < JobSteps.Length ? JobSteps[JobStepIndex] : new JobStep(JobType.Invalid);
+        public JobStep CurrentJobStep => JobSteps != null && JobStepIndex < JobSteps.Length ? JobSteps[JobStepIndex] : new JobStep(JobType.Invalid);
 
         public ResourceBundle ResourcesCarried { get; private set; } = new ResourceBundle();
 
@@ -64,7 +64,7 @@ namespace Plarf.Engine.Actors
                 // break job down into steps
                 JobSteps = PlarfGame.Instance.World.ActorCentralIntelligence.GetJobStepsFromJob(AssignedJob, this);
 
-                if (!JobSteps.Any())
+                if (JobSteps == null || !JobSteps.Any())
                     return;
 
                 JobStepIndex = 0;
@@ -92,6 +92,14 @@ namespace Plarf.Engine.Actors
                             JobStepBuildup -= JobStepDuration;
                             var res = (Resource)JobSteps[JobStepIndex].Placeable;
                             res.GatherFinished(this, ResourceHarvestableAmount(res));
+                            StepDone();
+                        }
+                        break;
+                    case JobType.DropResources:
+                        {
+                            // no buildup
+                            var b = (Building)JobSteps[JobStepIndex].Placeable;
+                            b.Store(ResourcesCarried);
                             StepDone();
                         }
                         break;
@@ -134,6 +142,8 @@ namespace Plarf.Engine.Actors
                     }
                 case JobType.StepMove:
                     return jobStep.Location.X != Location.X && jobStep.Location.Y != Location.Y ? DiagonalMovementCost : 1;
+                case JobType.DropResources:
+                    return 0;
             }
 
             throw new InvalidOperationException();
