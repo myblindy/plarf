@@ -21,7 +21,7 @@ namespace Plarf.Engine.Helpers.Types
                 InternalDict.Add(rc, amount);
         }
 
-        public override string ToString() => string.Join(", ", this.Select(kvp => kvp.Value + " " + kvp.Key.Name));
+        public override string ToString() => this.Any() ? string.Join(", ", this.Select(kvp => kvp.Value + " " + kvp.Key.Name)) : "Nothing";
 
         #region IDictionary implementation
         public bool ContainsKey(ResourceClass key) => InternalDict.ContainsKey(key);

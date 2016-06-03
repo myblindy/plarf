@@ -45,7 +45,8 @@ namespace Plarf.Engine.GameObjects
             Size = Size,
             Passable = true,
             Texture = Texture,
-            MaxWorkers = MaxWorkers
+            MaxWorkers = MaxWorkers,
+            GatherDuration = GatherDuration
         };
 
         public override void Run(TimeSpan t)

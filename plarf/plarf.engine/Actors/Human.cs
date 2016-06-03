@@ -36,11 +36,12 @@ namespace Plarf.Engine.Actors
         public override Actor CreateActorInstance(Location location) => new Human(this) { Location = location };
 
         public Job AssignedJob { get; set; }
-        public Job AIProcessedJob { get; set; }
+        private Job AIProcessedJob { get; set; }
+        private Job LastCompletedJob { get; set; }
 
         protected JobStep[] JobSteps;
-        protected double JobStepBuildup = 0;
-        protected double JobStepDuration = 0;
+        public double JobStepBuildup { get; set; } = 0;
+        public double JobStepDuration { get; set; } = 0;
         protected int JobStepIndex = 0;
         public JobStep CurrentJobStep => JobStepIndex < JobSteps.Length ? JobSteps[JobStepIndex] : new JobStep(JobType.Invalid);
 
@@ -48,11 +49,13 @@ namespace Plarf.Engine.Actors
 
         private int ResourceHarvestableAmount(Resource res) =>
             (int)(Math.Min(res.AmountLeft, Math.Floor(MaxCarryWeight - ResourcesCarried.Weight)) / res.ResourceClass.Weight);
+        public bool FullForResourceClass(ResourceClass rc) =>
+            Math.Floor(MaxCarryWeight - ResourcesCarried.Weight) / rc.Weight <= 0;
 
         public override void Run(TimeSpan t)
         {
             if (AssignedJob == null)
-                AssignedJob = PlarfGame.Instance.World.ActorCentralIntelligence.GetAvailableJob(this);
+                AssignedJob = PlarfGame.Instance.World.ActorCentralIntelligence.GetAvailableJob(this, LastCompletedJob);
 
             if (AssignedJob != AIProcessedJob)
             {
@@ -114,7 +117,8 @@ namespace Plarf.Engine.Actors
 
         private void JobDone()
         {
-            return;
+            LastCompletedJob = AssignedJob;
+            AssignedJob = null;
         }
 
         private double GetJobStepDuration(JobStep jobStep)

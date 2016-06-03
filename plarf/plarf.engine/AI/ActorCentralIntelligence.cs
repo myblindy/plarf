@@ -121,7 +121,7 @@ namespace Plarf.Engine.AI
                     actor.AssignedJob = null;
         }
 
-        public Job GetAvailableJob(Actor actor) =>
+        public Job GetAvailableJob(Actor actor, Job last) =>
             Jobs.OrderBy(j => actor.Location.Distance(j.Target.Location)).FirstOrDefault(j => j.Available);
 
         public JobStep[] GetJobStepsFromJob(Job job, Actor actor)

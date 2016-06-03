@@ -29,7 +29,6 @@ namespace Plarf.MonoGame.Helpers
                 new Vector2(0, 0), // point in line about which to rotate
                 SpriteEffects.None,
                 0);
-
         }
     }
 }

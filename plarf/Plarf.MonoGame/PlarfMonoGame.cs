@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Plarf.Engine;
 using Plarf.Engine.Actors;
+using Plarf.Engine.AI;
 using Plarf.Engine.GameObjects;
 using Plarf.Engine.Helpers.FileSystem;
 using Plarf.Engine.Helpers.Types;
@@ -124,15 +125,22 @@ namespace Plarf.MonoGame
                     spriteBatch.Draw(MiscTextures[actor.Texture],
                         new Rectangle((int)(actor.Location.X * gridsize), (int)(actor.Location.Y * gridsize), gridsize, gridsize), Color.White);
 
-                    // draw the AI target
                     var h = actor as Human;
+
+                    // draw the job step progress
+                    const int progressH = 4;
+                    if (h?.CurrentJobStep.Type != JobType.Invalid)
+                        spriteBatch.Draw(LineTexture, new Rectangle(
+                            (int)h.Location.X * gridsize, (int)(h.Location.Y) * gridsize - progressH,
+                            (int)((float)gridsize / h.JobStepDuration * h.JobStepBuildup),
+                            progressH), Color.Purple);
+
+                    // draw the AI target
                     if (h?.AssignedJob != null && h.AssignedJob.Target != null)
-                    {
                         spriteBatch.DrawLine(LineTexture,
                             new Vector2((float)((h.Location.X + .5) * gridsize), (float)((h.Location.Y + .5) * gridsize)),
                             new Vector2((float)((h.AssignedJob.Target.Location.X + h.AssignedJob.Target.Size.Width / 2.0) * gridsize), (float)((h.AssignedJob.Target.Location.Y + h.AssignedJob.Target.Size.Height / 2.0) * gridsize)),
                             Color.Yellow);
-                    }
                 }
 
             spriteBatch.End();
