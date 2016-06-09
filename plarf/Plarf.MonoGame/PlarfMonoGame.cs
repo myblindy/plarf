@@ -28,13 +28,18 @@ namespace Plarf.MonoGame
 
         Placeable SelectedPlaceable = null;
 
+        TimeSpan LastFPSUpdate;
+        int FPSFrameCounter;
+        double FPS;
+
         const int GridSize = 20, LogViewportWidth = 400;
 
         public PlarfMonoGame()
         {
-            graphics = new GraphicsDeviceManager(this) { PreferredBackBufferWidth = 1400 };
+            graphics = new GraphicsDeviceManager(this) { PreferredBackBufferWidth = 1400, SynchronizeWithVerticalRetrace = false };
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            IsFixedTimeStep = false;
         }
 
         MouseState LastMouseState;
@@ -104,6 +109,16 @@ namespace Plarf.MonoGame
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
+            // fps
+            ++FPSFrameCounter;
+            var fpsdelta = (gameTime.TotalGameTime - LastFPSUpdate).TotalSeconds;
+            if (fpsdelta >= 1)
+            {
+                FPS = FPSFrameCounter / fpsdelta;
+                FPSFrameCounter = 0;
+                LastFPSUpdate = gameTime.TotalGameTime;
+            }
 
             // update the game
             PlarfGame.Instance.Run(gameTime.ElapsedGameTime);
@@ -211,6 +226,9 @@ namespace Plarf.MonoGame
                     spriteBatch.Draw(MiscTextures[b.Texture],
                         new Rectangle((int)(b.Location.X * GridSize), (int)(b.Location.Y * GridSize), GridSize * b.Size.Width, GridSize * b.Size.Height), Color.White);
 
+            // FPS
+            spriteBatch.DrawString(DefaultFont, "FPS: " + FPS.ToString("0.0"), new Vector2(0, 0), Color.White);
+
             spriteBatch.End();
 
             // the console
@@ -223,7 +241,7 @@ namespace Plarf.MonoGame
 
                 int y = 2;
                 foreach (var prop in GetObjectProperties(SelectedPlaceable))
-                    spriteBatch.DrawString(DefaultFont, new string(' ', prop.Item3 * 3) + prop.Item1 + ": " + prop.Item2, new Vector2(0, y += 14), Color.White);
+                    spriteBatch.DrawString(DefaultFont, prop.Item1 + ": " + prop.Item2, new Vector2(prop.Item3 * 5, y += 14), Color.White);
             }
 
             spriteBatch.End();

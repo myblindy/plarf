@@ -74,7 +74,7 @@ namespace Plarf.Engine.Actors
                 JobStepDuration = GetJobStepDuration(JobSteps[JobStepIndex]);
             }
 
-            if (JobSteps != null && JobSteps.Any() && JobStepIndex < JobSteps.Length)
+            if (JobSteps != null && JobSteps.Length > 0 && JobStepIndex < JobSteps.Length)
             {
                 var step = JobSteps[JobStepIndex];
 
