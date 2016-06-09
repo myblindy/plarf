@@ -12,7 +12,6 @@ namespace Plarf.Engine.GameObjects
 {
     public class Resource : Placeable, IPlaceableTemplate
     {
-        public string Name { get; private set; }
         public ResourceClass ResourceClass { get; private set; }
         public ValueRange<int> ValueRange { get; private set; }
         public int AmountLeft { get; set; }

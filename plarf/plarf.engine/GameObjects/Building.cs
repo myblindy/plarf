@@ -16,7 +16,6 @@ namespace Plarf.Engine.GameObjects
 
     public abstract class Building : Placeable, IPlaceableTemplate
     {
-        public string Name { get; set; }
         public string Texture { get; set; }
         public BuildingFunction Function { get; set; }
         public ResourceClass[] StorageAccepted { get; set; }

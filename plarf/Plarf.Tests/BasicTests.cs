@@ -55,7 +55,7 @@ namespace Plarf.Tests
             Assert.IsTrue(PlarfGame.Instance.World.GetPlaceables(0, 2).Cast<Resource>().Single().Name == "Tree");
 
             // actors
-            var h = PlarfGame.Instance.World.AddActor(PlarfGame.Instance.HumanTemplate, new Location(2, 2)) as Human;
+            var h = PlarfGame.Instance.World.AddActor(PlarfGame.Instance.HumanTemplate, "H", new Location(2, 2)) as Human;
             //Game.Instance.World.AddActor(Game.Instance.HumanTemplate, new Location(0, 2));
 
             // simulation loop

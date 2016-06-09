@@ -26,7 +26,7 @@ namespace Plarf.Engine.AI
         public bool IsAvailable(Human human)
         {
             if (Type == JobType.Harvest)
-                return !(PlarfGame.Instance.World.Actors.OfType<Human>().Count(a => a.AssignedJob == this) == ((Resource)Target).MaxWorkers)
+                return !(PlarfGame.Instance.World.Placeables.OfType<Human>().Count(a => a.AssignedJob == this) == ((Resource)Target).MaxWorkers)
                     && !human.FullForResourceClass(((Resource)Target).ResourceClass);
             if (Type == JobType.DropResources)
                 return human.ResourcesCarried.Any(r => r.Value > 0);
@@ -117,7 +117,7 @@ namespace Plarf.Engine.AI
         {
             Jobs.RemoveAll(j => j.Target == res);
 
-            foreach (var actor in PlarfGame.Instance.World.Actors.OfType<Human>())
+            foreach (var actor in PlarfGame.Instance.World.Placeables.OfType<Human>())
                 if (actor.AssignedJob.Target == res)
                     actor.AssignedJob = null;
         }

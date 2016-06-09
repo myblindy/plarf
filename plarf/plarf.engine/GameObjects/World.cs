@@ -20,7 +20,6 @@ namespace Plarf.Engine.GameObjects
         {
             Size = worldsize;
             Placeables = new List<Placeable>();
-            Actors = new List<Actor>();
             MarkedResources = new HashSet<Resource>();
             ActorCentralIntelligence = new ActorCentralIntelligence();
         }
@@ -63,14 +62,12 @@ namespace Plarf.Engine.GameObjects
             }
         }
 
-        public List<Actor> Actors { get; private set; }
+        public Actor AddActor(Actor template, string name, double x, double y) => AddActor(template, name, new Location(x, y));
 
-        public Actor AddActor(Actor template, double x, double y) => AddActor(template, new Location(x, y));
-
-        public Actor AddActor(Actor template, Location location)
+        public Actor AddActor(Actor template, string name, Location location)
         {
-            var actor = template.CreateActorInstance(location);
-            Actors.Add(actor);
+            var actor = template.CreateActorInstance(name, location);
+            Placeables.Add(actor);
             return actor;
         }
 
@@ -89,9 +86,6 @@ namespace Plarf.Engine.GameObjects
         {
             foreach (var placeable in Placeables)
                 placeable.Run(t);
-
-            foreach (var actor in Actors)
-                actor.Run(t);
         }
     }
 }

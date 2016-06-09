@@ -22,6 +22,7 @@ namespace Plarf.Engine.Actors
             GatherSpeed = Convert.ToDouble(datafile.GatherSpeed);
             Texture = datafile.Texture;
             MaxCarryWeight = Convert.ToDouble(datafile.MaxCarryWeight);
+            Size = new Size(1, 1);
         }
 
         public Human(Human template)
@@ -31,9 +32,10 @@ namespace Plarf.Engine.Actors
             Location = template.Location;
             Texture = template.Texture;
             MaxCarryWeight = template.MaxCarryWeight;
+            Size = template.Size;
         }
 
-        public override Actor CreateActorInstance(Location location) => new Human(this) { Location = location };
+        public override Actor CreateActorInstance(string name, Location location) => new Human(this) { Name = name, Location = location };
 
         public Job AssignedJob { get; set; }
         private Job AIProcessedJob { get; set; }
