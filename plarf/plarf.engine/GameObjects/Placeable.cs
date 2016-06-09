@@ -29,5 +29,9 @@ namespace Plarf.Engine.GameObjects
         {
             return !(x >= Location.X + Size.Width || x + w <= Location.X || y >= Location.Y + Size.Height || y + h <= Location.Y);
         }
+
+        private bool dead;
+        public virtual bool Dead => dead;
+        public void DestroyPlaceable() { dead = true; }
     }
 }

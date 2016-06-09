@@ -76,6 +76,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\Buildings\sawmill.dat" />
     <None Include="Data\Buildings\storage.dat" />
     <None Include="Data\human.dat" />
     <None Include="Data\ResourceClasses\food.dat" />

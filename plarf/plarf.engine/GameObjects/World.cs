@@ -86,6 +86,8 @@ namespace Plarf.Engine.GameObjects
         {
             foreach (var placeable in Placeables)
                 placeable.Run(t);
+
+            Placeables.RemoveAll(p => p.Dead);
         }
     }
 }

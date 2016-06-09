@@ -1,0 +1,10 @@
+﻿Name = Sawmill
+Texture = Buildings/sawmill.png
+Passable = false
+BuildingType = static
+Width = 3
+Height = 2
+
+Function = production
+Manned = 2
+Recipe = 2 Wood + 3 Time -> 1 Log
