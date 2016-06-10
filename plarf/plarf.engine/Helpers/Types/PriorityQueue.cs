@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Plarf.Engine.Helpers
+namespace Plarf.Engine.Helpers.Types
 {
     class PriorityQueue<P, V>
     {
         private SortedDictionary<P, Queue<V>> list = new SortedDictionary<P, Queue<V>>();
+
         public void Enqueue(P priority, V value)
         {
             Queue<V> q;
@@ -19,6 +20,7 @@ namespace Plarf.Engine.Helpers
             }
             q.Enqueue(value);
         }
+
         public V Dequeue()
         {
             // will throw if there isn’t any first element!
@@ -28,6 +30,7 @@ namespace Plarf.Engine.Helpers
                 list.Remove(pair.Key);
             return v;
         }
+
         public bool IsEmpty
         {
             get { return !list.Any(); }

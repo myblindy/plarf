@@ -15,6 +15,8 @@ namespace Plarf.Engine.AI
     {
         Harvest,
         DropResources,
+        FeedProduction,
+        Production,
         StepMove,
         Invalid
     }
@@ -59,9 +61,11 @@ namespace Plarf.Engine.AI
         public override string ToString() => Type + " @ " + Location + (Placeable == null ? "" : " on " + Placeable);
     }
 
+    public enum JobPriority { VeryHigh, High, Normal, Low, VeryLow }
+
     public class ActorCentralIntelligence
     {
-        private List<Job> Jobs = new List<Job>();
+        private PriorityList<JobPriority, Job> Jobs = new PriorityList<JobPriority, Job>();
 
         [DebuggerDisplay("{Location}")]
         class AStarNode : AStarSearch.IHasNeighbours<AStarNode>
@@ -108,9 +112,24 @@ namespace Plarf.Engine.AI
             public override int GetHashCode() => Location.GetHashCode();
         }
 
-        public void AddResourceJob(Resource res)
+        public void AddProductionJob(Building building, JobPriority prod, JobPriority feed)
         {
-            Jobs.Add(new Job
+            Jobs.Add(prod, new Job
+            {
+                Type = JobType.Production,
+                Target = building,
+                WorkerType = building.WorkerType
+            });
+            Jobs.Add(feed, new Job
+            {
+                Type = JobType.FeedProduction,
+                Target = building
+            });
+        }
+
+        public void AddResourceJob(Resource res, JobPriority p)
+        {
+            Jobs.Add(p, new Job
             {
                 Type = JobType.Harvest,
                 Target = res
@@ -126,9 +145,9 @@ namespace Plarf.Engine.AI
                     actor.AssignedJob = null;
         }
 
-        public void AddStorageJob(Building b)
+        public void AddStorageJob(Building b, JobPriority p)
         {
-            Jobs.Add(new Job
+            Jobs.Add(p, new Job
             {
                 Type = JobType.DropResources,
                 Target = b

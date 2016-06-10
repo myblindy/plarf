@@ -103,6 +103,9 @@ namespace Plarf.Engine.GameObjects
                 case BuildingFunction.Storage:
                     PlarfGame.Instance.World.ActorCentralIntelligence.AddStorageJob(this);
                     break;
+                case BuildingFunction.Production:
+                    PlarfGame.Instance.World.ActorCentralIntelligence.AddProductionJob(this);
+                    break;
                 default:
                     throw new InvalidOperationException();
             }

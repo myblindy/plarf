@@ -9,6 +9,9 @@ namespace Plarf.MonoGame.Helpers
 {
     static class ObjectHelpers
     {
+        private static ISet<Type> SelfPresentingTypes = new HashSet<Type> { typeof(ValueRange<int>), typeof(ValueRange<int>?), typeof(Size), typeof(Location),
+            typeof(ProductionChain), typeof(NameWithPlural), typeof(WorkerType), typeof(Engine.AI.JobStep) };
+
         public static IEnumerable<Tuple<string, object, int>> GetObjectProperties(object obj, int ident = 0)
         {
             foreach (var prop in obj.GetType().GetProperties())
@@ -34,11 +37,8 @@ namespace Plarf.MonoGame.Helpers
                     else
                         yield return Tuple.Create(prop.Name, (object)"Nothing", ident + 1);
                 }
-                else if (rettype == typeof(ValueRange<int>) || rettype == typeof(ValueRange<int>?) || rettype == typeof(Size) || rettype == typeof(Location)
-                    || rettype == typeof(ProductionChain) || rettype == typeof(NameWithPlural) || rettype == typeof(WorkerType) || rettype == typeof(Engine.AI.JobStep))
-                {
+                else if (SelfPresentingTypes.Contains(rettype))
                     yield return Tuple.Create(prop.Name, (object)val.ToString(), ident);                              // types that have a readable ToString()
-                }
                 else
                 {
                     yield return Tuple.Create(prop.Name, (object)("[" + rettype.Name + "]"), ident);
@@ -47,6 +47,5 @@ namespace Plarf.MonoGame.Helpers
                 }
             }
         }
-
     }
 }

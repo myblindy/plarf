@@ -56,6 +56,7 @@
     <Compile Include="GameObjects\Building.cs" />
     <Compile Include="Helpers\Types\Extensions.cs" />
     <Compile Include="Helpers\Types\NameWithPlural.cs" />
+    <Compile Include="Helpers\Types\PriorityList.cs" />
     <Compile Include="Helpers\Types\ProductionChain.cs" />
     <Compile Include="Helpers\Types\ResourceBundle.cs" />
     <Compile Include="Helpers\Types\WorkerType.cs" />
@@ -68,7 +69,7 @@
     <Compile Include="Helpers\AStarSearch.cs" />
     <Compile Include="Helpers\FileSystem\DataFile.cs" />
     <Compile Include="Helpers\Exceptions\LocationAlreadyInUse.cs" />
-    <Compile Include="Helpers\PriorityQueue.cs" />
+    <Compile Include="Helpers\Types\PriorityQueue.cs" />
     <Compile Include="Helpers\Types\IRunnable.cs" />
     <Compile Include="Helpers\Types\Location.cs" />
     <Compile Include="Helpers\Types\Size.cs" />
