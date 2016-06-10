@@ -54,7 +54,9 @@
     <Compile Include="Actors\Human.cs" />
     <Compile Include="AI\ActorCentralIntelligence.cs" />
     <Compile Include="GameObjects\Building.cs" />
-    <Compile Include="GameObjects\BuildingFlex.cs" />
+    <Compile Include="Helpers\Types\Extensions.cs" />
+    <Compile Include="Helpers\Types\NameWithPlural.cs" />
+    <Compile Include="Helpers\Types\ProductionChain.cs" />
     <Compile Include="Helpers\Types\ResourceBundle.cs" />
     <Compile Include="PlarfGame.cs" />
     <Compile Include="GameObjects\IPlaceableTemplate.cs" />
@@ -79,6 +81,7 @@
     <None Include="Data\Buildings\sawmill.dat" />
     <None Include="Data\Buildings\storage.dat" />
     <None Include="Data\human.dat" />
+    <None Include="Data\ResourceClasses\log.dat" />
     <None Include="Data\ResourceClasses\food.dat" />
     <None Include="Data\ResourceClasses\wood.dat" />
     <None Include="Data\Resources\tree.dat" />
@@ -89,6 +92,7 @@
     <None Include="Data\ResourceClasses\stone.dat" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Data\Buildings\sawmill.png" />
     <Content Include="Data\Buildings\storage.png" />
     <Content Include="Data\Resources\tree.png" />
     <Content Include="Data\Resources\stones.png" />

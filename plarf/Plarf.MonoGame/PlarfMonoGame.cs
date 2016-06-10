@@ -211,7 +211,7 @@ namespace Plarf.MonoGame
 
                 int y = 2;
                 foreach (var prop in ObjectHelpers.GetObjectProperties(SelectedPlaceable))
-                    spriteBatch.DrawString(DefaultFont, prop.Item1 + ": " + prop.Item2, new Vector2(prop.Item3 * 5, y += 14), Color.White);
+                    spriteBatch.DrawString(DefaultFont, prop.Item1 + ": " + prop.Item2, new Vector2(prop.Item3 * 15, y += 14), Color.White);
             }
 
             spriteBatch.End();

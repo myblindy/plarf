@@ -11,39 +11,89 @@ namespace Plarf.Engine.GameObjects
 {
     public enum BuildingFunction
     {
-        Storage
+        Storage,
+        Production
     }
 
-    public abstract class Building : Placeable, IPlaceableTemplate
+    public enum BuildingType
+    {
+        Flex,
+        Static
+    }
+
+    public class Building : Placeable, IPlaceableTemplate
     {
         public string Texture { get; set; }
         public BuildingFunction Function { get; set; }
         public ResourceClass[] StorageAccepted { get; set; }
         public ResourceBundle Resources { get; set; } = new ResourceBundle();
+        public ValueRange<int>? FlexWidth { get; set; }
+        public ValueRange<int>? FlexHeight { get; set; }
+        public BuildingType Type { get; set; }
+        public int MaxWorkers { get; set; }
+        public NameWithPlural WorkerName { get; set; }
+        public ProductionChain ProductionChain { get; set; }
 
-        public abstract Placeable CreatePlaceableInstance(Location location, Size size);
+        public virtual Placeable CreatePlaceableInstance(Location location, Size size) => new Building
+        {
+            Name = Name,
+            Texture = Texture,
+            Function = Function,
+            StorageAccepted = StorageAccepted,
+            FlexHeight = FlexHeight,
+            FlexWidth = FlexWidth,
+            Passable = Passable,
+            Location = location,
+            Size = Type == BuildingType.Flex ? size : Size
+        };
 
         private static BuildingFunction BuildingFunctionFromString(string s)
         {
-            if (s.Equals("storage", StringComparison.InvariantCultureIgnoreCase)) return BuildingFunction.Storage;
+            if (s.EqualsI("storage")) return BuildingFunction.Storage;
+            if (s.EqualsI("production")) return BuildingFunction.Production;
             throw new InvalidOperationException();
         }
 
         public static Building FromDataFile(dynamic datafile)
         {
-            if (datafile.BuildingType.Equals("flex", StringComparison.InvariantCultureIgnoreCase))
-                return new BuildingFlex
-                {
-                    Name = datafile.Name,
-                    Texture = datafile.Texture,
-                    Passable = DataFile.ToBoolean(datafile.Passable, false),
-                    FlexHeight = DataFile.ToIntValueRange(datafile.FlexHeight),
-                    FlexWidth = DataFile.ToIntValueRange(datafile.FlexWidth),
-                    Function = BuildingFunctionFromString(datafile.Function),
-                    StorageAccepted = datafile.StorageAccepted == "all" ? (ResourceClass[])null : null
-                };
+            // common fields
+            var b = new Building
+            {
+                Name = datafile.Name,
+                Texture = datafile.Texture,
+                Passable = DataFile.ToBoolean(datafile.Passable, false),
+                Function = BuildingFunctionFromString(datafile.Function),
+            };
 
-            throw new InvalidOperationException();
+            // building type fields
+            if (Extensions.EqualsI(datafile.BuildingType, "flex"))
+            {
+                b.FlexHeight = DataFile.ToIntValueRange(datafile.FlexHeight);
+                b.FlexWidth = DataFile.ToIntValueRange(datafile.FlexWidth);
+                b.Type = BuildingType.Flex;
+            }
+            else if (Extensions.EqualsI(datafile.BuildingType, "static"))
+            {
+                b.Size = new Size(Convert.ToInt32(datafile.Width), Convert.ToInt32(datafile.Height));
+                b.Type = BuildingType.Static;
+            }
+
+            // function fields
+            switch (b.Function)
+            {
+                case BuildingFunction.Production:
+                    b.MaxWorkers = Convert.ToInt32(datafile.MaxWorkers);
+                    b.WorkerName = new NameWithPlural(datafile.WorkerName);
+                    b.ProductionChain = new ProductionChain(datafile.ProductionChain);
+                    break;
+                case BuildingFunction.Storage:
+                    b.StorageAccepted = datafile.StorageAccepted == "all" ? (ResourceClass[])null : null;
+                    break;
+                default:
+                    throw new InvalidOperationException();
+            };
+
+            return b;
         }
 
         public override void OnAdded()
@@ -75,5 +125,7 @@ namespace Plarf.Engine.GameObjects
                 res.RemoveAll(kvp => StorageAccepted.Contains(kvp.Key));
             }
         }
+
+        public override void Run(TimeSpan t) { }
     }
 }

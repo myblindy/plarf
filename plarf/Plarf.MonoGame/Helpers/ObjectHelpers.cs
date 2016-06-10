@@ -18,7 +18,7 @@ namespace Plarf.MonoGame.Helpers
 
                 // figure out if it's a basic type
                 var rettype = prop.PropertyType;
-                var basictype = rettype == typeof(string) || rettype == typeof(int) || rettype == typeof(double) || rettype.IsEnum;
+                var basictype = rettype == typeof(string) || rettype == typeof(int) || rettype == typeof(double) || rettype == typeof(bool) || rettype.IsEnum;
                 var val = prop.GetValue(obj);
 
                 if (val == null)
@@ -34,10 +34,10 @@ namespace Plarf.MonoGame.Helpers
                     else
                         yield return Tuple.Create(prop.Name, (object)"Nothing", ident + 1);
                 }
-                else if (rettype == typeof(ValueRange<int>))
+                else if (rettype == typeof(ValueRange<int>) || rettype == typeof(ValueRange<int>?) || rettype == typeof(Size) || rettype == typeof(Location)
+                    || rettype == typeof(ProductionChain))
                 {
-                    var range = (ValueRange<int>)val;
-                    yield return Tuple.Create(prop.Name, (object)(range.From + "-" + range.To), ident);
+                    yield return Tuple.Create(prop.Name, (object)val.ToString(), ident);                              // types that have a readable ToString()
                 }
                 else
                 {

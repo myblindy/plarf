@@ -29,7 +29,7 @@ namespace Plarf.Engine.GameObjects
             MaxWorkers = Convert.ToInt32(datafile.MaxWorkers);
 
             Tuple<ValueRange<int>, string> classvalues = DataFile.ToNamedIntValueRange(datafile.Holds);
-            ResourceClass = PlarfGame.Instance.ResourceClasses.Single(r => r.Name.Equals(classvalues.Item2, StringComparison.CurrentCultureIgnoreCase));
+            ResourceClass = PlarfGame.Instance.ResourceClasses.Single(r => r.Name.EqualsI(classvalues.Item2));
             ValueRange = classvalues.Item1;
         }
 
