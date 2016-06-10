@@ -31,7 +31,7 @@ namespace Plarf.Engine.GameObjects
         public ValueRange<int>? FlexHeight { get; set; }
         public BuildingType Type { get; set; }
         public int MaxWorkers { get; set; }
-        public NameWithPlural WorkerName { get; set; }
+        public WorkerType WorkerType { get; set; }
         public ProductionChain ProductionChain { get; set; }
 
         public virtual Placeable CreatePlaceableInstance(Location location, Size size) => new Building
@@ -83,7 +83,7 @@ namespace Plarf.Engine.GameObjects
             {
                 case BuildingFunction.Production:
                     b.MaxWorkers = Convert.ToInt32(datafile.MaxWorkers);
-                    b.WorkerName = new NameWithPlural(datafile.WorkerName);
+                    b.WorkerType = new WorkerType(datafile.WorkerName);
                     b.ProductionChain = new ProductionChain(datafile.ProductionChain);
                     break;
                 case BuildingFunction.Storage:

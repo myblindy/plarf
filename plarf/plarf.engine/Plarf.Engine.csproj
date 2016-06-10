@@ -58,6 +58,7 @@
     <Compile Include="Helpers\Types\NameWithPlural.cs" />
     <Compile Include="Helpers\Types\ProductionChain.cs" />
     <Compile Include="Helpers\Types\ResourceBundle.cs" />
+    <Compile Include="Helpers\Types\WorkerType.cs" />
     <Compile Include="PlarfGame.cs" />
     <Compile Include="GameObjects\IPlaceableTemplate.cs" />
     <Compile Include="GameObjects\Placeable.cs" />

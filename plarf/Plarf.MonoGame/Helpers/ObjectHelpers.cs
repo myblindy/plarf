@@ -35,7 +35,7 @@ namespace Plarf.MonoGame.Helpers
                         yield return Tuple.Create(prop.Name, (object)"Nothing", ident + 1);
                 }
                 else if (rettype == typeof(ValueRange<int>) || rettype == typeof(ValueRange<int>?) || rettype == typeof(Size) || rettype == typeof(Location)
-                    || rettype == typeof(ProductionChain))
+                    || rettype == typeof(ProductionChain) || rettype == typeof(NameWithPlural) || rettype == typeof(WorkerType) || rettype == typeof(Engine.AI.JobStep))
                 {
                     yield return Tuple.Create(prop.Name, (object)val.ToString(), ident);                              // types that have a readable ToString()
                 }

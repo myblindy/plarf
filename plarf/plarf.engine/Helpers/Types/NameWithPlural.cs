@@ -18,5 +18,7 @@ namespace Plarf.Engine.Helpers.Types
             Singular = arr[0].Trim();
             Plural = arr[1].Trim();
         }
+
+        public override string ToString() => Singular + " | " + Plural;
     }
 }

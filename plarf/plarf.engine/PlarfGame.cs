@@ -32,6 +32,8 @@ namespace Plarf.Engine
         /// </summary>
         public IDictionary<string, Resource> ResourceTemplates { get; private set; }
 
+        public IList<WorkerType> WorkerTypes { get; private set; }
+
         public Human HumanTemplate { get; private set; }
 
         public IDictionary<string, Building> BuildingClasses { get; private set; }
@@ -80,6 +82,8 @@ namespace Plarf.Engine
                     var b = Building.FromDataFile(new DataFile(bfilestream));
                     BuildingClasses.Add(b.Name, b);
                 }
+
+            WorkerTypes = BuildingClasses.Values.Select(b => b.WorkerType).Where(t => t != null).ToList();
         }
 
         public void Run(TimeSpan t)

@@ -60,8 +60,10 @@ namespace Plarf.MonoGame
             res = PlarfGame.Instance.World.AddPlaceable(PlarfGame.Instance.ResourceTemplates["Tree"], 2, 4) as Resource;
             PlarfGame.Instance.World.MarkResourceForHarvest(res);
 
-            PlarfGame.Instance.World.AddActor(PlarfGame.Instance.HumanTemplate, "H0", 0, 0);
-            PlarfGame.Instance.World.AddActor(PlarfGame.Instance.HumanTemplate, "H1", 6, 7);
+            PlarfGame.Instance.World.AddActor(PlarfGame.Instance.HumanTemplate, "C1", 0, 0);
+            PlarfGame.Instance.World.AddActor(PlarfGame.Instance.HumanTemplate, "C2", 6, 7);
+            ((Human)PlarfGame.Instance.World.AddActor(PlarfGame.Instance.HumanTemplate, "SM1", 0, 1)).WorkerType = PlarfGame.Instance.WorkerTypes[0];
+            ((Human)PlarfGame.Instance.World.AddActor(PlarfGame.Instance.HumanTemplate, "SM2", 0, 2)).WorkerType = PlarfGame.Instance.WorkerTypes[0];
 
             PlarfGame.Instance.World.AddPlaceable(PlarfGame.Instance.BuildingClasses["Storage"], 0, 8, 12, 4);
 

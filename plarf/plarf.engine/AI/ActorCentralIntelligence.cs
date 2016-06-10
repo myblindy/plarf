@@ -23,8 +23,12 @@ namespace Plarf.Engine.AI
     {
         public JobType Type { get; set; }
         public Placeable Target { get; set; }
-        public bool IsAvailable(Human human)
+        public WorkerType WorkerType { get; set; }
+        public bool IsAvailable(Human human, bool allowtocarry = false)
         {
+            if (!allowtocarry && human.WorkerType != WorkerType)
+                return false;
+
             if (Type == JobType.Harvest)
                 return !(PlarfGame.Instance.World.Placeables.OfType<Human>().Count(a => a.AssignedJob == this) == ((Resource)Target).MaxWorkers)
                     && !human.FullForResourceClass(((Resource)Target).ResourceClass);

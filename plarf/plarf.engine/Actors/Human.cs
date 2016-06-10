@@ -15,6 +15,7 @@ namespace Plarf.Engine.Actors
         public double MovementSpeed { get; private set; }
         public double GatherSpeed { get; private set; }
         public double MaxCarryWeight { get; private set; }
+        public WorkerType WorkerType { get; set; }
 
         public Human(dynamic datafile)
         {
