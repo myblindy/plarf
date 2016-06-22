@@ -1,5 +1,6 @@
 ﻿using Plarf.Engine.Helpers.Types;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,13 @@ namespace Plarf.MonoGame.Helpers
     {
         private static ISet<Type> SelfPresentingTypes = new HashSet<Type> { typeof(ValueRange<int>), typeof(ValueRange<int>?), typeof(Size), typeof(Location),
             typeof(ProductionChain), typeof(NameWithPlural), typeof(WorkerType), typeof(Engine.AI.JobStep) };
+
+        private static bool IsEnumerableEmpty(IEnumerable enumerable)
+        {
+            foreach (var item in enumerable)
+                return false;
+            return true;
+        }
 
         public static IEnumerable<Tuple<string, object, int>> GetObjectProperties(object obj, int ident = 0)
         {
@@ -39,6 +47,22 @@ namespace Plarf.MonoGame.Helpers
                 }
                 else if (SelfPresentingTypes.Contains(rettype))
                     yield return Tuple.Create(prop.Name, (object)val.ToString(), ident);                              // types that have a readable ToString()
+                else if ((rettype.IsGenericType && rettype.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                    || rettype.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
+                {                                                                                                     // IEnumerable<T>
+                    if (IsEnumerableEmpty((IEnumerable)val))
+                        yield return Tuple.Create(prop.Name, (object)"Empty", ident);
+                    else
+                    {
+                        var ienum = rettype.GetGenericTypeDefinition() == typeof(IEnumerable<>) ? rettype : rettype.GetInterfaces().First(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+                        yield return Tuple.Create(prop.Name, (object)("[IEnumerable<" + ienum.GetGenericArguments()[0].Name + ">]"), ident);
+
+                        // and iterate over it
+                        int idx = 0;
+                        foreach (var item in (IEnumerable)val)
+                            yield return Tuple.Create(idx++.ToString(), item, ident + 1);
+                    }
+                }
                 else
                 {
                     yield return Tuple.Create(prop.Name, (object)("[" + rettype.Name + "]"), ident);

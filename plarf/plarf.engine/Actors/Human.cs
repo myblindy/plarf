@@ -41,6 +41,7 @@ namespace Plarf.Engine.Actors
         public Job AssignedJob { get; set; }
         private Job AIProcessedJob { get; set; }
         private Job LastCompletedJob { get; set; }
+        public Building WorksIn => AssignedJob?.Type == JobType.Production ? AssignedJob?.Target as Building : null;
 
         protected JobStep[] JobSteps;
         public double JobStepBuildup { get; set; } = 0;

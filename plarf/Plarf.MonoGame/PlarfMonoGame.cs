@@ -65,7 +65,8 @@ namespace Plarf.MonoGame
             ((Human)PlarfGame.Instance.World.AddActor(PlarfGame.Instance.HumanTemplate, "SM1", 0, 1)).WorkerType = PlarfGame.Instance.WorkerTypes[0];
             ((Human)PlarfGame.Instance.World.AddActor(PlarfGame.Instance.HumanTemplate, "SM2", 0, 2)).WorkerType = PlarfGame.Instance.WorkerTypes[0];
 
-            PlarfGame.Instance.World.AddPlaceable(PlarfGame.Instance.BuildingClasses["Storage"], 0, 8, 12, 4);
+            PlarfGame.Instance.World.AddPlaceable(PlarfGame.Instance.BuildingClasses["Storage"], 6, 8, 12, 4);
+            PlarfGame.Instance.World.AddPlaceable(PlarfGame.Instance.BuildingClasses["Sawmill"], 0, 8);
 
             // initialize the ui
             LastMouseState = Mouse.GetState();

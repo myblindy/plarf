@@ -31,12 +31,23 @@ namespace Plarf.Engine.AI
             if (!allowtocarry && human.WorkerType != WorkerType)
                 return false;
 
-            if (Type == JobType.Harvest)
-                return !(PlarfGame.Instance.World.Placeables.OfType<Human>().Count(a => a.AssignedJob == this) == ((Resource)Target).MaxWorkers)
-                    && !human.FullForResourceClass(((Resource)Target).ResourceClass);
-            if (Type == JobType.DropResources)
-                return human.ResourcesCarried.Any(r => r.Value > 0);
-            throw new InvalidOperationException();
+            switch (Type)
+            {
+                case JobType.Harvest:
+                    return !(PlarfGame.Instance.World.Placeables.OfType<Human>().Count(a => a.AssignedJob == this) == ((Resource)Target).MaxWorkers)
+                        && !human.FullForResourceClass(((Resource)Target).ResourceClass);
+                case JobType.DropResources:
+                    return human.ResourcesCarried.Any(r => r.Value > 0);
+                case JobType.Production:
+                    {
+                        var b = (Building)Target;
+                        return b.Workers.Any() && b.Resources.ContainsFully(b.ProductionChain.Inputs);
+                    }
+                case JobType.FeedProduction:
+                    return PlarfGame.Instance.World.StoredResources.ContainsAny(((Building)Target).ProductionChain.Inputs);
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         public override string ToString() => Type + " " + Target;

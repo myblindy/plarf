@@ -53,7 +53,7 @@ namespace Plarf.Engine.GameObjects
             if (mark)
             {
                 if (MarkedResources.Add(res))
-                    ActorCentralIntelligence.AddResourceJob(res);
+                    ActorCentralIntelligence.AddResourceJob(res, JobPriority.Low);
             }
             else
             {
@@ -72,6 +72,9 @@ namespace Plarf.Engine.GameObjects
         }
 
         public ActorCentralIntelligence ActorCentralIntelligence { get; private set; }
+
+        public ResourceBundle StoredResources =>
+            Placeables.OfType<Building>().Where(b => b.Function == BuildingFunction.Storage).Aggregate(new ResourceBundle(), (acc, rb) => acc + rb.Resources);
 
         public IEnumerable<Placeable> GetPlaceables(int x, int y) => Placeables.Where(r => r.ContainsPoint(x, y));
         public IEnumerable<Placeable> GetPlaceables(int x, int y, int w, int h) => Placeables.Where(r => r.Intersects(x, y, w, h));

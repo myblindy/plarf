@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Plarf.Engine.Helpers.Types;
 using System.Collections;
 using Plarf.Engine.Helpers.FileSystem;
+using Plarf.Engine.Actors;
 
 namespace Plarf.Engine.GameObjects
 {
@@ -44,7 +45,12 @@ namespace Plarf.Engine.GameObjects
             FlexWidth = FlexWidth,
             Passable = Passable,
             Location = location,
-            Size = Type == BuildingType.Flex ? size : Size
+            Size = Type == BuildingType.Flex ? size : Size,
+            Resources = Resources,
+            MaxWorkers = MaxWorkers,
+            WorkerType = WorkerType,
+            ProductionChain = ProductionChain
+
         };
 
         private static BuildingFunction BuildingFunctionFromString(string s)
@@ -101,10 +107,10 @@ namespace Plarf.Engine.GameObjects
             switch (Function)
             {
                 case BuildingFunction.Storage:
-                    PlarfGame.Instance.World.ActorCentralIntelligence.AddStorageJob(this);
+                    PlarfGame.Instance.World.ActorCentralIntelligence.AddStorageJob(this, AI.JobPriority.Normal);
                     break;
                 case BuildingFunction.Production:
-                    PlarfGame.Instance.World.ActorCentralIntelligence.AddProductionJob(this);
+                    PlarfGame.Instance.World.ActorCentralIntelligence.AddProductionJob(this, AI.JobPriority.High, AI.JobPriority.Normal);
                     break;
                 default:
                     throw new InvalidOperationException();
@@ -128,6 +134,9 @@ namespace Plarf.Engine.GameObjects
                 res.RemoveAll(kvp => StorageAccepted.Contains(kvp.Key));
             }
         }
+
+        public IEnumerable<Human> Workers =>
+            PlarfGame.Instance.World.Placeables.OfType<Human>().Where(w => w.WorksIn == this);
 
         public override void Run(TimeSpan t) { }
     }

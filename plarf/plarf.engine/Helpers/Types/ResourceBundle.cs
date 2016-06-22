@@ -33,6 +33,35 @@ namespace Plarf.Engine.Helpers.Types
                 InternalDict.Remove(kvp.Key);
         }
 
+        public bool ContainsFully(ResourceBundle resources)
+        {
+            foreach (var kvp in resources)
+                if (!ContainsKey(kvp.Key) || kvp.Value > this[kvp.Key])
+                    return false;
+            return true;
+        }
+
+        public bool ContainsAny(ResourceBundle resources)
+        {
+            foreach (var kvp in resources)
+                if (ContainsKey(kvp.Key) && kvp.Value > 0 && this[kvp.Key] > 0)
+                    return true;
+            return false;
+        }
+
+        public static ResourceBundle operator +(ResourceBundle a, ResourceBundle b)
+        {
+            var res = new ResourceBundle();
+            foreach (var kvp in a)
+                res.Add(kvp);
+            foreach (var kvp in b)
+                if (res.ContainsKey(kvp.Key))
+                    res[kvp.Key] += kvp.Value;
+                else
+                    res.Add(kvp);
+            return res;
+        }
+
         public override string ToString() => this.Any() ? string.Join(", ", this.Select(kvp => kvp.Value + " " + kvp.Key.Name)) : "Nothing";
 
         #region IDictionary implementation

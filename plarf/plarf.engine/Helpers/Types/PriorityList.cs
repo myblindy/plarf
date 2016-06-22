@@ -116,9 +116,7 @@ namespace Plarf.Engine.Helpers.Types
                     kvp.Value.Remove(item);
         }
 
-        public IEnumerable<VType> OrderBy<VType, TKey>(Func<VType, TKey> selector) where VType = V
-        {
-            return List.SelectMany(kvp => kvp.Value);
-        }
+        public IEnumerable<V> OrderBy<TKey>(Func<V, TKey> selector) =>
+            List.SelectMany(kvp => kvp.Value.OrderBy(elem => selector(elem)));
     }
 }
