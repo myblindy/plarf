@@ -1,7 +1,7 @@
 ﻿Name = Tree
-Holds = 60-80 Wood
+Holds = 20-25 Wood
 Width = 1
 Height = 1
-GatherDuration = 4
+GatherDuration = 2.5
 MaxWorkers = 4
 Texture = Resources/Tree.png

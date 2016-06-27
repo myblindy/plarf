@@ -15,6 +15,7 @@ namespace Plarf.Engine.AI
     {
         Harvest,
         DropResources,
+        WorkersPopulateBuilding,
         FeedProduction,
         Production,
         StepMove,
@@ -45,6 +46,8 @@ namespace Plarf.Engine.AI
                     }
                 case JobType.FeedProduction:
                     return PlarfGame.Instance.World.StoredResources.ContainsAny(((Building)Target).ProductionChain.Inputs);
+                case JobType.WorkersPopulateBuilding:
+                    return human.WorkerType == ((Building)Target).WorkerType && human.WorksIn == null;
                 default:
                     throw new InvalidOperationException();
             }
@@ -123,7 +126,7 @@ namespace Plarf.Engine.AI
             public override int GetHashCode() => Location.GetHashCode();
         }
 
-        public void AddProductionJob(Building building, JobPriority prod, JobPriority feed)
+        public void AddProductionJob(Building building, JobPriority prod, JobPriority feed, JobPriority workermovetobuilding)
         {
             Jobs.Add(prod, new Job
             {
@@ -135,6 +138,12 @@ namespace Plarf.Engine.AI
             {
                 Type = JobType.FeedProduction,
                 Target = building
+            });
+            Jobs.Add(workermovetobuilding, new Job
+            {
+                Type = JobType.WorkersPopulateBuilding,
+                Target = building,
+                WorkerType = building.WorkerType
             });
         }
 
@@ -187,7 +196,7 @@ namespace Plarf.Engine.AI
                         n => Location.Distance(n.Location, new Location(job.Target.Location.X + job.Target.Size.Width / 2, job.Target.Location.Y + job.Target.Size.Height / 2)));
             };
 
-            if (job.Type == JobType.Harvest || job.Type == JobType.DropResources)
+            if (job.Type == JobType.Harvest || job.Type == JobType.DropResources || job.Type == JobType.WorkersPopulateBuilding)
             {
                 var path = buildpath();
 

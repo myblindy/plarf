@@ -43,7 +43,7 @@ namespace Plarf.MonoGame.Helpers
                         foreach (var kvp in (ResourceBundle)val)
                             yield return Tuple.Create(prop.Name, (object)(kvp.Value + " " + kvp.Key), ident + 1);
                     else
-                        yield return Tuple.Create(prop.Name, (object)"Nothing", ident + 1);
+                        yield return Tuple.Create(prop.Name, (object)"Empty", ident + 1);
                 }
                 else if (SelfPresentingTypes.Contains(rettype))
                     yield return Tuple.Create(prop.Name, (object)val.ToString(), ident);                              // types that have a readable ToString()

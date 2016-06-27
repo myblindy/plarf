@@ -110,7 +110,7 @@ namespace Plarf.Engine.GameObjects
                     PlarfGame.Instance.World.ActorCentralIntelligence.AddStorageJob(this, AI.JobPriority.Normal);
                     break;
                 case BuildingFunction.Production:
-                    PlarfGame.Instance.World.ActorCentralIntelligence.AddProductionJob(this, AI.JobPriority.High, AI.JobPriority.Normal);
+                    PlarfGame.Instance.World.ActorCentralIntelligence.AddProductionJob(this, AI.JobPriority.High, AI.JobPriority.Normal, AI.JobPriority.Normal);
                     break;
                 default:
                     throw new InvalidOperationException();

@@ -41,7 +41,8 @@ namespace Plarf.Engine.Actors
         public Job AssignedJob { get; set; }
         private Job AIProcessedJob { get; set; }
         private Job LastCompletedJob { get; set; }
-        public Building WorksIn => AssignedJob?.Type == JobType.Production ? AssignedJob?.Target as Building : null;
+        //public Building WorksIn => AssignedJob?.Type == JobType.Production ? AssignedJob?.Target as Building : null;
+        public Building ChosenWorkplace { get; set; }
 
         protected JobStep[] JobSteps;
         public double JobStepBuildup { get; set; } = 0;
@@ -58,6 +59,11 @@ namespace Plarf.Engine.Actors
 
         public override void Run(TimeSpan t)
         {
+            if(ChosenWorkplace==null && WorkerType != null)
+            {
+                // try to find a matching workplace
+            }
+
             if (AssignedJob == null)
                 AssignedJob = PlarfGame.Instance.World.ActorCentralIntelligence.GetAvailableJob(this, LastCompletedJob);
 
