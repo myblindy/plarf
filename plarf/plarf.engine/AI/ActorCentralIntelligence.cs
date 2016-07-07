@@ -13,13 +13,16 @@ namespace Plarf.Engine.AI
 {
     public enum JobType
     {
-        Harvest,
-        DropResources,
-        WorkersPopulateBuilding,
-        FeedProduction,
-        Production,
-        StepMove,
-        Invalid
+        Harvest,                                                    // harvest a resource
+        DropResources,                                              // drops accepted resources held into placeable
+        EnterWorkplace,                                             // move to enter workplace
+        FeedProduction,                                             // feed a production chain
+        Production,                                                 // run the production chain
+
+        StepMove,                                                   // just a step, move to an adjacent cell
+        StepRetrieveResources,                                      // just a step, retrieve requested resources
+
+        Invalid                                                     // nothing, idle
     }
 
     public class Job
@@ -46,7 +49,7 @@ namespace Plarf.Engine.AI
                     }
                 case JobType.FeedProduction:
                     return PlarfGame.Instance.World.StoredResources.ContainsAny(((Building)Target).ProductionChain.Inputs);
-                case JobType.WorkersPopulateBuilding:
+                case JobType.EnterWorkplace:
                     return human.ChosenWorkplace == Target && !human.InsideWorkplace;
                 default:
                     throw new InvalidOperationException();
@@ -56,18 +59,19 @@ namespace Plarf.Engine.AI
         public override string ToString() => Type + " " + Target;
     }
 
-    [DebuggerDisplay("{Type} @ {Location} on {Placeable}")]
     public struct JobStep
     {
         public Location Location;
         public JobType Type;
         public Placeable Placeable;
+        public ResourceBundle Resources;
 
-        public JobStep(Location location, JobType type, Placeable placeable)
+        public JobStep(Location location, JobType type, Placeable placeable, ResourceBundle resources = null)
         {
             Location = location;
             Type = type;
             Placeable = placeable;
+            Resources = resources;
         }
 
         public JobStep(JobType type) : this(null, type, null) { }
@@ -141,7 +145,7 @@ namespace Plarf.Engine.AI
             });
             Jobs.Add(workermovetobuilding, new Job
             {
-                Type = JobType.WorkersPopulateBuilding,
+                Type = JobType.EnterWorkplace,
                 Target = building,
                 WorkerType = building.WorkerType
             });
@@ -182,30 +186,50 @@ namespace Plarf.Engine.AI
             if (job == null)
                 return null;
 
-            Func<AStarSearch.Path<AStarNode>> buildpath = () =>
+            Func<Location, Placeable, IEnumerable<JobStep>> buildpath = (from, to) =>
+              {
+                  var destset = new HashSet<AStarNode>();
+                  for (int x = (int)to.Location.X; x < to.Location.X + to.Size.Width; ++x)
+                      for (int y = (int)to.Location.Y; y < to.Location.Y + to.Size.Height; ++y)
+                          destset.Add(new AStarNode(new Location(x, y)));
+
+                  var path = AStarSearch.FindPath(
+                      new AStarNode(from),
+                      destset,
+                      (n1, n2) => Location.Distance(n1.Location, n2.Location),
+                      n => Location.Distance(n.Location, new Location(job.Target.Location.X + job.Target.Size.Width / 2, job.Target.Location.Y + job.Target.Size.Height / 2)));
+
+                  return path.Select((n, i) => new JobStep(n.Location, JobType.StepMove, null))
+                      .SkipWhile(w => job.Target.ContainsPoint(w.Location))                                  // skip anything inside the target, stop just outside
+                      .Reverse().Skip(1);                                                                    // reverse since the path returned is from the resource to us, then skip the actor's location (first path item)
+              };
+
+            if (job.Type == JobType.Harvest || job.Type == JobType.DropResources || job.Type == JobType.EnterWorkplace)
+                return buildpath(actor.Location, job.Target)
+                    .Concat(new JobStep(job.Target.Location, job.Type, job.Target).ToEnumerable())       // after we get to the target, queue an action step (harvest, drop, etc)
+                    .ToArray();
+            else if (job.Type == JobType.FeedProduction)
             {
-                var destset = new HashSet<AStarNode>();
-                for (int x = (int)job.Target.Location.X; x < job.Target.Location.X + job.Target.Size.Width; ++x)
-                    for (int y = (int)job.Target.Location.Y; y < job.Target.Location.Y + job.Target.Size.Height; ++y)
-                        destset.Add(new AStarNode(new Location(x, y)));
+                var b = (Building)job.Target;
 
-                return AStarSearch.FindPath(
-                        new AStarNode(actor.Location),
-                        destset,
-                        (n1, n2) => Location.Distance(n1.Location, n2.Location),
-                        n => Location.Distance(n.Location, new Location(job.Target.Location.X + job.Target.Size.Width / 2, job.Target.Location.Y + job.Target.Size.Height / 2)));
-            };
+                // find the closest storage that contains stuff the production building needs
+                // we know there is one or we wouldn't have gotten here
+                var closeststorage = PlarfGame.Instance.World.Placeables.OfType<Building>()
+                    .Where(w => w.Function == BuildingFunction.Storage && w.Resources.ContainsAny(b.ProductionChain.Inputs))
+                    .OrderBy(w => w.Location.Distance(actor.Location))
+                    .First();
 
-            if (job.Type == JobType.Harvest || job.Type == JobType.DropResources || job.Type == JobType.WorkersPopulateBuilding)
-            {
-                var path = buildpath();
-
-                return path.Select((n, i) => new JobStep(n.Location, JobType.StepMove, null))
-                    .SkipWhile(w => job.Target.ContainsPoint(w.Location))                                  // skip anything inside the target, stop just outside
-                    .Reverse().Skip(1)                                                                     // reverse since the path returned is from the resource to us, then skip the actor's location (first path item)
-                    .Concat(Enumerable.Repeat(new JobStep(job.Target.Location, job.Type, job.Target), 1))  // after we get to the target, queue an action step (harvest, drop, etc)
+                // and build the path, actor->storage--(retrieve)-->prod--(prod)-->done
+                var tostorage = buildpath(actor.Location, closeststorage).ToArray();
+                var toprod = buildpath(tostorage.Last().Location, b);
+                return tostorage
+                    .Concat(new JobStep(closeststorage.Location, JobType.StepRetrieveResources, closeststorage, b.ProductionChain.Inputs.Intersect(closeststorage.Resources)).ToEnumerable())
+                    .Concat(toprod)
+                    .Concat(new JobStep(b.Location, JobType.DropResources, b).ToEnumerable())
                     .ToArray();
             }
+            else if (job.Type == JobType.Production)
+                return new[] { new JobStep(JobType.Production) };                                           // simply start the production step
 
             throw new InvalidOperationException();
         }

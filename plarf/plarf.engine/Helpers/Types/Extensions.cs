@@ -9,5 +9,7 @@ namespace Plarf.Engine.Helpers.Types
     public static class Extensions
     {
         public static bool EqualsI(this string a, string b) => string.Equals(a, b, StringComparison.InvariantCultureIgnoreCase);
+
+        public static IEnumerable<T> ToEnumerable<T>(this T item) => Enumerable.Repeat(item, 1);
     }
 }

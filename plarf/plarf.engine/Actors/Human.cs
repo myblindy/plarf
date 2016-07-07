@@ -27,6 +27,7 @@ namespace Plarf.Engine.Actors
         public double JobStepBuildup { get; set; } = 0;
         public double JobStepDuration { get; set; } = 0;
         protected int JobStepIndex = 0;
+        protected bool JobStepFirstCycle = true;
         public JobStep CurrentJobStep => JobSteps != null && JobStepIndex < JobSteps.Length ? JobSteps[JobStepIndex] : new JobStep(JobType.Invalid);
 
         public ResourceBundle ResourcesCarried { get; private set; } = new ResourceBundle();
@@ -53,9 +54,9 @@ namespace Plarf.Engine.Actors
         public override Actor CreateActorInstance(string name, Location location) => new Human(this) { Name = name, Location = location };
 
         private int ResourceHarvestableAmount(Resource res) =>
-            (int)(Math.Min(res.AmountLeft, Math.Floor(MaxCarryWeight - ResourcesCarried.Weight)) / res.ResourceClass.Weight);
+            (int)(Math.Min(res.AmountLeft, Math.Floor(MaxCarryWeight - ResourcesCarried.Weight)) / res.ResourceClass.UnitWeight);
         public bool FullForResourceClass(ResourceClass rc) =>
-            Math.Floor(MaxCarryWeight - ResourcesCarried.Weight) / rc.Weight <= 0;
+            Math.Floor(MaxCarryWeight - ResourcesCarried.Weight) / rc.UnitWeight <= 0;
 
         public override void Run(TimeSpan t)
         {
@@ -98,6 +99,16 @@ namespace Plarf.Engine.Actors
                             StepDone();
                         }
                         break;
+                    case JobType.Production:
+                        if (JobStepFirstCycle)
+                            ((Building)JobSteps[JobStepIndex].Placeable).ConsumeProductionInputs();
+                        if ((JobStepBuildup += MovementSpeed * t.TotalSeconds) >= JobStepDuration)
+                        {
+                            JobStepBuildup -= JobStepDuration;
+                            ((Building)JobSteps[JobStepIndex].Placeable).ProductionDone();
+                            StepDone();
+                        }
+                        break;
                     case JobType.Harvest:
                         if ((JobStepBuildup += GatherSpeed * t.TotalSeconds) >= JobStepDuration)
                         {
@@ -115,16 +126,31 @@ namespace Plarf.Engine.Actors
                             StepDone();
                         }
                         break;
-                    case JobType.WorkersPopulateBuilding:
+                    case JobType.EnterWorkplace:
                         {
                             // no buildup
                             InsideWorkplace = true;
                             StepDone();
                         }
                         break;
+                    case JobType.StepRetrieveResources:
+                        {
+                            // no buildup
+                            foreach (var rc in JobSteps[JobStepIndex].Resources.Keys.ToArray())
+                            {
+                                var available = JobSteps[JobStepIndex].Resources[rc];
+                                var amt = Math.Min(available, (int)((MaxCarryWeight - ResourcesCarried.Weight) / rc.UnitWeight));
+                                JobSteps[JobStepIndex].Resources[rc] = available - amt;
+                                Carry(rc, amt);
+                            }
+                            StepDone();
+                        }
+                        break;
                     default:
                         throw new InvalidOperationException();
                 }
+
+                JobStepFirstCycle = false;
             }
         }
 
@@ -140,6 +166,8 @@ namespace Plarf.Engine.Actors
                 JobStepDuration = GetJobStepDuration(JobSteps[JobStepIndex]);
             else
                 JobDone();
+
+            JobStepFirstCycle = true;
         }
 
         private void JobDone()
@@ -160,10 +188,13 @@ namespace Plarf.Engine.Actors
                         return res.GatherDuration * ResourceHarvestableAmount(res);
                     }
                 case JobType.StepMove:
-                    return jobStep.Location.X != Location.X && jobStep.Location.Y != Location.Y ? DiagonalMovementCost : 1;
+                    return jobStep.Location == Location ? 0 : jobStep.Location.X != Location.X && jobStep.Location.Y != Location.Y ? DiagonalMovementCost : 1;
                 case JobType.DropResources:
-                case JobType.WorkersPopulateBuilding:
+                case JobType.EnterWorkplace:
+                case JobType.StepRetrieveResources:
                     return 0;
+                case JobType.Production:
+                    return ChosenWorkplace.ProductionChain.TimeRequired.TotalSeconds;
             }
 
             throw new InvalidOperationException();

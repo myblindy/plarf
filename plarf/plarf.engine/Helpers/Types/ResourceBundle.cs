@@ -27,6 +27,12 @@ namespace Plarf.Engine.Helpers.Types
                 Add(kvp);
         }
 
+        public void Remove(ResourceBundle res)
+        {
+            foreach (var kvp in res.Intersect(this))
+                SafeSet(kvp.Key, kvp.Value);
+        }
+
         public void RemoveAll(Func<KeyValuePair<ResourceClass, int>, bool> predicate)
         {
             foreach (var kvp in InternalDict.Where(w => predicate(w)).ToArray())
@@ -62,6 +68,31 @@ namespace Plarf.Engine.Helpers.Types
             return res;
         }
 
+        public ResourceBundle Intersect(ResourceBundle rb)
+        {
+            var res = new ResourceBundle();
+            foreach (var key in Keys.Intersect(rb.Keys))
+                res.Add(key, Math.Min(SafeGet(key) ?? 0, rb.SafeGet(key) ?? 0));
+
+            return res;
+        }
+
+        public int? SafeGet(ResourceClass key)
+        {
+            int val;
+            if (TryGetValue(key, out val))
+                return val;
+            return null;
+        }
+
+        public void SafeSet(ResourceClass key, int val)
+        {
+            if (ContainsKey(key))
+                this[key] = val;
+            else if (val != 0)
+                Add(key, val);
+        }
+
         public override string ToString() => this.Any() ? string.Join(", ", this.Select(kvp => kvp.Value + " " + kvp.Key.Name)) : "Nothing";
 
         #region IDictionary implementation
@@ -85,7 +116,7 @@ namespace Plarf.Engine.Helpers.Types
 
         IEnumerator IEnumerable.GetEnumerator() => InternalDict.GetEnumerator();
 
-        public double Weight => this.Sum(kvp => kvp.Key.Weight * kvp.Value);
+        public double Weight => this.Sum(kvp => kvp.Key.UnitWeight * kvp.Value);
 
         public ICollection<ResourceClass> Keys => InternalDict.Keys;
 

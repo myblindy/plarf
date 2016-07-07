@@ -135,6 +135,12 @@ namespace Plarf.Engine.GameObjects
             }
         }
 
+        internal void ConsumeProductionInputs() =>
+            Resources.Remove(ProductionChain.Inputs);
+
+        internal void ProductionDone() =>
+            Resources.Add(ProductionChain.Outputs);
+
         public IEnumerable<Human> Workers =>
             PlarfGame.Instance.World.Placeables.OfType<Human>().Where(w => w.ChosenWorkplace == this);
 
