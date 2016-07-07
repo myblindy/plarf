@@ -17,6 +17,20 @@ namespace Plarf.Engine.Actors
         public double MaxCarryWeight { get; private set; }
         public WorkerType WorkerType { get; set; }
 
+        public Job AssignedJob { get; set; }
+        private Job AIProcessedJob { get; set; }
+        private Job LastCompletedJob { get; set; }
+        public Building ChosenWorkplace { get; set; }
+        public bool InsideWorkplace { get; set; }
+
+        protected JobStep[] JobSteps;
+        public double JobStepBuildup { get; set; } = 0;
+        public double JobStepDuration { get; set; } = 0;
+        protected int JobStepIndex = 0;
+        public JobStep CurrentJobStep => JobSteps != null && JobStepIndex < JobSteps.Length ? JobSteps[JobStepIndex] : new JobStep(JobType.Invalid);
+
+        public ResourceBundle ResourcesCarried { get; private set; } = new ResourceBundle();
+
         public Human(dynamic datafile)
         {
             MovementSpeed = Convert.ToDouble(datafile.MovementSpeed);
@@ -38,20 +52,6 @@ namespace Plarf.Engine.Actors
 
         public override Actor CreateActorInstance(string name, Location location) => new Human(this) { Name = name, Location = location };
 
-        public Job AssignedJob { get; set; }
-        private Job AIProcessedJob { get; set; }
-        private Job LastCompletedJob { get; set; }
-        //public Building WorksIn => AssignedJob?.Type == JobType.Production ? AssignedJob?.Target as Building : null;
-        public Building ChosenWorkplace { get; set; }
-
-        protected JobStep[] JobSteps;
-        public double JobStepBuildup { get; set; } = 0;
-        public double JobStepDuration { get; set; } = 0;
-        protected int JobStepIndex = 0;
-        public JobStep CurrentJobStep => JobSteps != null && JobStepIndex < JobSteps.Length ? JobSteps[JobStepIndex] : new JobStep(JobType.Invalid);
-
-        public ResourceBundle ResourcesCarried { get; private set; } = new ResourceBundle();
-
         private int ResourceHarvestableAmount(Resource res) =>
             (int)(Math.Min(res.AmountLeft, Math.Floor(MaxCarryWeight - ResourcesCarried.Weight)) / res.ResourceClass.Weight);
         public bool FullForResourceClass(ResourceClass rc) =>
@@ -59,9 +59,11 @@ namespace Plarf.Engine.Actors
 
         public override void Run(TimeSpan t)
         {
-            if(ChosenWorkplace==null && WorkerType != null)
+            if (ChosenWorkplace == null && WorkerType != null)
             {
                 // try to find a matching workplace
+                ChosenWorkplace = PlarfGame.Instance.World.Placeables.OfType<Building>()
+                    .FirstOrDefault(b => b.Function == BuildingFunction.Production && b.WorkerType == WorkerType && b.Workers.Count() < b.MaxWorkers);
             }
 
             if (AssignedJob == null)
@@ -113,6 +115,13 @@ namespace Plarf.Engine.Actors
                             StepDone();
                         }
                         break;
+                    case JobType.WorkersPopulateBuilding:
+                        {
+                            // no buildup
+                            InsideWorkplace = true;
+                            StepDone();
+                        }
+                        break;
                     default:
                         throw new InvalidOperationException();
                 }
@@ -153,6 +162,7 @@ namespace Plarf.Engine.Actors
                 case JobType.StepMove:
                     return jobStep.Location.X != Location.X && jobStep.Location.Y != Location.Y ? DiagonalMovementCost : 1;
                 case JobType.DropResources:
+                case JobType.WorkersPopulateBuilding:
                     return 0;
             }
 

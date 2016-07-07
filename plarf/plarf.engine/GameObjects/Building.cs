@@ -136,7 +136,7 @@ namespace Plarf.Engine.GameObjects
         }
 
         public IEnumerable<Human> Workers =>
-            PlarfGame.Instance.World.Placeables.OfType<Human>().Where(w => w.WorksIn == this);
+            PlarfGame.Instance.World.Placeables.OfType<Human>().Where(w => w.ChosenWorkplace == this);
 
         public override void Run(TimeSpan t) { }
     }

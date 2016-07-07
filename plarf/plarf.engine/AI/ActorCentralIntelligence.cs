@@ -47,7 +47,7 @@ namespace Plarf.Engine.AI
                 case JobType.FeedProduction:
                     return PlarfGame.Instance.World.StoredResources.ContainsAny(((Building)Target).ProductionChain.Inputs);
                 case JobType.WorkersPopulateBuilding:
-                    return human.WorkerType == ((Building)Target).WorkerType && human.WorksIn == null;
+                    return human.ChosenWorkplace == Target && !human.InsideWorkplace;
                 default:
                     throw new InvalidOperationException();
             }
