@@ -84,13 +84,22 @@ namespace Plarf.Engine.GameObjects
             return loc.X >= 0 && loc.Y >= 0 && loc.X < Size.Width && loc.Y < Size.Height;
         }
 
+        TimeSpan TimeSinceLastUpdate = TimeSpan.Zero;
+        const double UpdateRate = 1.0 / 30;
+
         [MoonSharpHidden]
         public void Run(TimeSpan t)
         {
-            foreach (var placeable in Placeables)
-                placeable.Run(t);
+            TimeSinceLastUpdate += t;
+            if (TimeSinceLastUpdate.TotalSeconds >= UpdateRate)
+            {
+                TimeSinceLastUpdate.Add(TimeSpan.FromSeconds(-UpdateRate));
 
-            Placeables.RemoveAll(p => p.Dead);
+                foreach (var placeable in Placeables)
+                    placeable.Run(t);
+
+                Placeables.RemoveAll(p => p.Dead);
+            }
         }
     }
 }
